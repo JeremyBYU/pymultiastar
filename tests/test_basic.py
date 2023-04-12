@@ -1,4 +1,4 @@
-import scikit_build_example as m
+import pymultiastar as m
 
 
 def test_version():
