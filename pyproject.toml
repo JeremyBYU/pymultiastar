@@ -35,3 +35,10 @@ test-command = "pytest {project}/tests"
 test-extras = ["test"]
 test-skip = ["*universal2:arm64"]
 build-verbosity = 1
+
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+line-length = 100
+# Assume Python 3.10.
+target-version = "py310"

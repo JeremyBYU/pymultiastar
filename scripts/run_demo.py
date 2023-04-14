@@ -5,14 +5,12 @@ import pymultiastar as pmstar
 
 def main():
     # create our map
-    my_map = np.zeros(shape=(3,3,3), dtype='f4')
-
-    # my_map[1,1,1] = 0.0 # Add obstacle in the center
+    # pymultiastar expects a three dimensional map in f32
+    map_3d = np.zeros(shape=(3,3,3), dtype='f4') 
     start_cell = [0,0,0]
     goal_cells = [([0,0,1], 6), ([2,2,2], 1), ([2,2,1], 4)]
 
-
-    
+    # parameters to initialize mulit goal a star search
     params = dict(
         map_res=1.0,
         obstacle_value=1.0, # map ranges from 0-1 values. An obstacle will be the value 1.0
@@ -20,7 +18,7 @@ def main():
         goal_weight = 0.5, 
         path_weight = 0.5,
     )
-    planner = pmstar.PyMultiAStar(my_map, **params)
+    planner = pmstar.PyMultiAStar(map_3d, **params)
 
     total_cost = 1.73 * 2 # we have to travel 2 diagonal spaces from 0,0,0 to 1,1,1
     print(total_cost)
