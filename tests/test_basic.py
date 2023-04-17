@@ -1,13 +1,39 @@
-import pymultiastar as m
+import pymultiastar as pmstar
+import pytest
+import numpy as np
 
+@pytest.fixture
+def small_map():
+    map_3d = np.zeros(shape=(3,3,3), dtype='f4') 
+    
+    map_data = dict(map=map_3d, start_cell=[0,0,0], 
+                    goal_cells=[([0,0,1], 6), ([2,2,2], 1), ([1,1,1], 1.5)])
+    return map_data
+
+@pytest.fixture
+def small_maze_2d():
+    pass
+    # np.asarray(PIL.Image.open('test.jpg'))
+
+@pytest.mark.parametrize("goal_weight,path_weight,expected_path", [
+(0.5, 0.5, [[0,0,0], [1,1,1]]),
+(0.95, 0.05, [[0,0,0], [1,1,1], [2,2,2]]),
+(0.05, 0.95, [[0,0,0], [0,0,1]]),
+], ids=["balanced", "high_goal_weight", "low_goal_weight"])
+def test_small_map(small_map, goal_weight, path_weight, expected_path):
+    params = dict(
+        map_res=1.0,
+        obstacle_value=1.0, # map ranges from 0-1 values. An obstacle will be the value 1.0
+        normalizing_path_cost = 3.0, # normalize path distance by dividing by this number
+        goal_weight=goal_weight,
+        path_weight=path_weight
+    )
+    planner = pmstar.PyMultiAStar(small_map['map'], **params)
+    path, path_cost, meta = planner.search_multiple(small_map['start_cell'], small_map['goal_cells'])
+
+    np.testing.assert_allclose(path, expected_path)
 
 def test_version():
-    assert m.__version__ == "0.0.1"
+    assert len(pmstar.__version__.split('.')) == 3
 
 
-def test_add():
-    assert m.add(1, 2) == 3
-
-
-def test_sub():
-    assert m.subtract(1, 2) == -1

@@ -20,9 +20,8 @@ def main():
     )
     planner = pmstar.PyMultiAStar(map_3d, **params)
 
-    total_cost = 1.73 * 2 # we have to travel 2 diagonal spaces from 0,0,0 to 1,1,1
-    print(total_cost)
-    print(planner.search_multiple(start_cell, goal_cells))
+    path, path_cost, meta = planner.search_multiple(start_cell, goal_cells)
+    print(f"path: {path}, path_cost: {path_cost}, meta: {meta}")
 
     # print(stuff.search_single(start_cell, goal_cells[1][0]))
 
