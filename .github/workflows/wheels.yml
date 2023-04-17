@@ -4,11 +4,8 @@ on:
   workflow_dispatch:
   pull_request:
   push:
-    branches:
-     - master
-  release:
-    types:
-      - published
+    tags:
+      - v*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -53,7 +50,7 @@ jobs:
         CIBW_ARCHS_MACOS: universal2
         CIBW_ARCHS_WINDOWS: auto ARM64
         CIBW_ARCHS_LINUX: auto64
-        CIBW_SKIP: "cp27-* cp35-* cp36-* pp* *-musllinux-*"
+        CIBW_SKIP: "cp27-* cp35-* cp36-* pp* *musllinux*"
 
     - name: Verify clean directory
       run: git diff --exit-code
@@ -68,7 +65,7 @@ jobs:
     name: Upload if release
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
 
     steps:
     - uses: actions/setup-python@v4
