@@ -1,9 +1,9 @@
 # Just testing if pmultiastar is working
-import numpy as np
 import pymultiastar as pmstar
 from pymultiastar.img_helpers import get_maze, write_path_to_maze
 from pathlib import Path
 from PIL import Image
+from time import perf_counter
 
 MAZE_DIR = Path(__file__).parent.parent / "tests" / "fixtures"
 mazes = [("Small Maze", MAZE_DIR / "maze_small.png", [3,3], [1799, 1799]),
@@ -37,12 +37,14 @@ def run_maze(img_path: Path, maze_start=None, maze_end=None):
     )
 
     planner = pmstar.PyMultiAStar(maze_data["map"], **params)
-
+    t0 = perf_counter()
     path, path_cost, meta = planner.search_multiple(
         start_cell, goal_cells
     )
+    t1 = perf_counter()
+    dt = (t1-t0) * 1000
 
-    print(f"path: {path}, path_cost: {path_cost}, meta: {meta}")
+    print(f"dt: {dt:.1f}ms, path: {path}, path_cost: {path_cost}, meta: {meta}")
     new_image_path = write_path_to_maze(img_path, path)
     Image.open(new_image_path).show()
 
