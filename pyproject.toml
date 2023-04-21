@@ -25,7 +25,7 @@ build-backend = "scikit_build_core.build"
 
 [project.optional-dependencies]
 dev = ["pytest", "Pillow"]
-vis = ["open3d>=0.17", "matplotlib"]
+vis = ["open3d>=0.17", "matplotlib", "ipdb"]
 
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true
