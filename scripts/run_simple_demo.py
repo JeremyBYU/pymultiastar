@@ -10,7 +10,7 @@ def main():
     start_cell = [0,0,0]
     goal_cells = [([0,0,1], 6), ([2,2,2], 1), ([2,2,1], 4)]
 
-    # parameters to initialize mulit goal a star search
+    # parameters to initialize multi goal a-star search
     params = dict(
         map_res=1.0,
         obstacle_value=1.0, # map ranges from 0-1 values. An obstacle will be the value 1.0

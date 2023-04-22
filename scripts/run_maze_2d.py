@@ -1,6 +1,6 @@
 # Just testing if pmultiastar is working
 import pymultiastar as pmstar
-from pymultiastar.img_helpers import get_maze, write_path_to_maze
+from pymultiastar.visualization.img2d_helpers import get_maze, write_path_to_maze
 from pathlib import Path
 from PIL import Image
 from time import perf_counter

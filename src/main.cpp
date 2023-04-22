@@ -4,24 +4,18 @@
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
-int add(int i, int j) {
-    return i + j;
-}
-
 namespace py = pybind11;
 
 PYBIND11_MODULE(_core, m) {
     m.doc() = R"pbdoc(
-        Pybind11 example plugin
+        PyMultiAstar
         -----------------------
 
-        .. currentmodule:: scikit_build_example
+        .. currentmodule:: pymultiastar
 
         .. autosummary::
            :toctree: _generate
 
-           add
-           subtract
     )pbdoc";
 
     py::class_<PyMultiAStar>(m, "PyMultiAStar")
@@ -30,18 +24,6 @@ PYBIND11_MODULE(_core, m) {
              py::arg("normalizing_path_cost") = NORM_PATH_COST, py::arg("goal_weight") = GOAL_WEIGHT, py::arg("path_weight") = PATH_WEIGHT, py::arg("keep_nodes") = KEEP_NODES, py::arg("path_w0") = W0)
         .def("search_multiple", &PyMultiAStar::search_multiple, py::arg("start_cell"), py::arg("goal_cells"))
         .def("search_single", &PyMultiAStar::search_single_public, py::arg("start_cell"), py::arg("goal_cell"));
-
-    m.def("add", &add, R"pbdoc(
-        Add two numbers
-
-        Some other explanation about the add function.
-    )pbdoc");
-
-    m.def("subtract", [](int i, int j) { return i - j; }, R"pbdoc(
-        Subtract two numbers
-
-        Some other explanation about the subtract function.
-    )pbdoc");
 
 #ifdef VERSION_INFO
     m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
