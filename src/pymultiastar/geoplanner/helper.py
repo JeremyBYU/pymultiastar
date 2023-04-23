@@ -1,5 +1,8 @@
 import numpy as np
-
+from typing import Union, List
+from copy import deepcopy
+from .types import LandingSite, GPS, VoxelMeta, ArrayFloatMxNxK
+from pyproj import Transformer
 
 def convert_cost_map_to_float(cost_map, flip_xy=True, normalize=True, set_max_value_to_inf=True):
     """Will convert a uint8 cost map to a float32
@@ -22,3 +25,77 @@ def convert_cost_map_to_float(cost_map, flip_xy=True, normalize=True, set_max_va
     if set_max_value_to_inf:
         cost_map[cost_map == 1.0] = np.inf
     return cost_map
+
+
+def prepare_planning_args_optimized(start_position:GPS, ls_list:List[LandingSite], transformer:Transformer):
+    """Prepares a list of landing sites formatted as a dictionary to be sent to a Path Planner
+    Data is in x, y, height all in meters"""
+    projected_position = np.array(transformer.transform(*start_position.to_array()))
+    projected_goal_positions = [(np.array(transformer.transform(*ls.centroid.to_array())), ls.landing_site_risk)
+                        for ls in ls_list]
+
+    return projected_position, projected_goal_positions
+
+
+def convert_voxel_coord(coord:Union[List, np.ndarray], voxel_meta:VoxelMeta, to_cell=True):
+    """
+    i=y,j=x,k=z
+    """
+    if to_cell:
+        # coord=(x,y,z) meter coordinates, offset
+        x_meters = coord[0] - voxel_meta['xmin']
+        y_meters = coord[1] - voxel_meta['ymin']
+        z_meters = coord[2] - voxel_meta['zmin']
+
+        j = max(min(int(round(
+            (x_meters - voxel_meta['xres'] / 2) / voxel_meta['xres'])), voxel_meta['ncols'] - 1), 0)  # cols
+        i = max(min(int(round(
+            (y_meters - voxel_meta['yres'] / 2) / voxel_meta['yres'])), voxel_meta['nrows'] - 1), 0)  # rows
+
+        k = max(min(
+            int(round((z_meters) / voxel_meta['zres'])), voxel_meta['nslices'] - 1), 0)  # depth
+
+        return [i, j, k]
+    else:
+        # coord=(i,j,k) cell coordinates!
+        x_meters = coord[1] * voxel_meta['xres'] + \
+            voxel_meta['xmin']
+        y_meters = coord[0] * voxel_meta['yres'] + \
+            voxel_meta['ymin']
+        z_meters = coord[2] * voxel_meta['zres'] + \
+            voxel_meta['zmin']
+
+        return [x_meters, y_meters, z_meters]
+
+def get_free_neighbor_cell(cell:Union[List, np.ndarray], cost_map:ArrayFloatMxNxK):
+    neighbors = [
+        [cell[0], cell[1], cell[2] + 1],
+        [cell[0] + 1, cell[1], cell[2]],
+        [cell[0] - 1, cell[1], cell[2]],
+        [cell[0], cell[1] + 1, cell[2]],
+        [cell[0], cell[1] - 1, cell[2]],
+    ]
+    for n in neighbors:
+        try:
+            if cost_map[n[0], n[1], n[2]] != np.inf:
+                return n
+        except Exception as e:
+            continue
+    return None
+
+def get_first_free_cell_up(coord, voxel_meta:VoxelMeta, cost_map:ArrayFloatMxNxK, to_cell=True):
+    if to_cell:
+        coord = convert_voxel_coord(coord, voxel_meta, to_cell=True)
+    for i in range(coord[2], voxel_meta['nslices']):
+        val = cost_map[coord[0], coord[1], i]
+        if val != np.inf:
+            return [coord[0], coord[1], i]
+    return None
+
+def get_path_dist(path:List[List]) -> float:
+    dist:float = 0.0
+    for i in range(len(path) - 1):
+        a = np.array(path[i], dtype=np.float32)
+        b = np.array(path[i + 1], dtype=np.float32)
+        dist += float(np.linalg.norm(a - b))
+    return dist
