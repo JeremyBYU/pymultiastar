@@ -282,7 +282,7 @@ std::tuple<py::array_t<int, 2>, float, int> PyMultiAStar::search_single(std::arr
   // return std::make_tuple(path, 5.0, 1);
 }
 
-std::tuple<py::array_t<int, 2>, float, py::dict> PyMultiAStar::search_multiple(std::array<int, 3> start_cell, std::vector<std::tuple<std::array<int, 3>, float>> goal_cells)
+std::tuple<py::array_t<int, 2>, py::dict> PyMultiAStar::search_multiple(std::array<int, 3> start_cell, std::vector<std::tuple<std::array<int, 3>, float>> goal_cells)
 {
   // Ensure that
   reset_nodes();
@@ -373,11 +373,13 @@ std::tuple<py::array_t<int, 2>, float, py::dict> PyMultiAStar::search_multiple(s
       return idx == best_planned_goal.idx;
       } ));
   }
-  py::dict additional_data = py::dict("goal_index"_a=goal_index, "num_expansions"_a=0, "total_goal_searches"_a=total_goal_searches, "total_cost_astar"_a=best_planned_goal.total_cost);
+  py::dict additional_data = py::dict("goal_index"_a=goal_index, "total_goal_searches"_a=total_goal_searches, 
+                                      "goal_total_cost"_a=best_planned_goal.total_cost, "goal_path_cost"_a=best_planned_goal.path_cost,
+                                      "goal_value"_a=best_planned_goal.goal_value, "num_expansions"_a=0);
 
   if (DEBUG || INFO)
   {
     std::printf("Finished Multi-goal search \n");
   }
-  return std::make_tuple(best_planned_path, best_planned_goal.path_cost, additional_data);
+  return std::make_tuple(best_planned_path, additional_data);
 }

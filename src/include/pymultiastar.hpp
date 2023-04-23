@@ -107,7 +107,7 @@ public:
   PyMultiAStar(pybind11::array_t<float> map, bool allow_diag = true, float map_res = RES, float obstacle_value = LARGE_NUMBER, float normalizing_path_cost = 1.0, float goal_weight = 0.5, float path_weight = 0.5, bool keep_nodes = false, float path_w0 = W0); // Constructor
 
   // Search for multiple goals that have a value associated with them
-  std::tuple<pybind11::array_t<int, 2>, float, pybind11::dict> search_multiple(std::array<int, 3> start_cell, std::vector<std::tuple<std::array<int, 3>, float>> goal_cells);
+  std::tuple<pybind11::array_t<int, 2>, pybind11::dict> search_multiple(std::array<int, 3> start_cell, std::vector<std::tuple<std::array<int, 3>, float>> goal_cells);
   // Private member function
   std::tuple<pybind11::array_t<int, 2>, float, int> search_single(std::array<int, 3> &start_cell, const GoalData &primary_goal, std::vector<GoalData> &goals);
   // Classic A*, 1 goal and no goal value

@@ -24,9 +24,10 @@ requires = ["scikit-build-core>=0.2.1", "pybind11"]
 build-backend = "scikit_build_core.build"
 
 [project.optional-dependencies]
-dev = ["pytest", "Pillow", "black"]
 vis = ["open3d>=0.17", "matplotlib", "ipdb"]
 geo = ["pyproj>=3.0"]
+test = ["pytest", "Pillow"]
+dev = ["black", "pymultiastar[vis,geo,test]"]
 
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true

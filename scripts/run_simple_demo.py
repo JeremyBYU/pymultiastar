@@ -20,10 +20,8 @@ def main():
     )
     planner = pmstar.PyMultiAStar(map_3d, **params)
 
-    path, path_cost, meta = planner.search_multiple(start_cell, goal_cells)
-    print(f"path: {path}, path_cost: {path_cost}, meta: {meta}")
-
-    # print(stuff.search_single(start_cell, goal_cells[1][0]))
+    path, meta = planner.search_multiple(start_cell, goal_cells)
+    print(f"path: {path}, meta: {meta}")
 
 if __name__ == "__main__":
     main()

@@ -1,13 +1,12 @@
 from dataclasses import dataclass, asdict, fields
-from typing import TypedDict
-from typing import Dict, List, Annotated, Literal, TypeVar, Union
+from typing import Dict, List, Tuple, TypedDict
 import numpy.typing as npt
 import numpy as np
+from ..types import ArrayFloatMxNxK, Cell, CellPath
 
 
-DType = TypeVar("DType", bound=np.generic)
-Array3x3 = Annotated[npt.NDArray[DType], Literal[3, 3]]
-ArrayFloatMxNxK = Annotated[npt.NDArray[np.float32], Literal["M", "N", "K"]]
+Coord = Tuple[float, float, float]
+CoordPath = List[Coord]
 
 class SuperDataClass():
     def to_dict(self) -> Dict:
@@ -25,7 +24,7 @@ class PlannerKwargs(SuperDataClass):
     normalizing_path_cost:float = 1.0
     goal_weight:float = 0.5
     path_weight: float = 0.5
-    keep_nodes: float = False
+    keep_nodes: bool = False
     path_w0: float = 1.0
 
 
@@ -71,17 +70,16 @@ class LandingSite(SuperDataClass):
     "The normalized risk of this landing site [0-1]"
 
 
-class PlannerData(TypedDict):
-    path_cells: List[List[int]]
-    path_meters: List[List[float]]
+class GeoMultiPlannerResult(TypedDict):
+    path_cells: CellPath
+    path_projected: CoordPath
     path_length: float
-    path_cost: float
     time_ms: float
+    valid_landing_site_indices: List[int]
     goal_index: int
-    num_expansions: int
     total_goal_searches: int
-    total_cost: float
-
-
-
+    goal_total_cost: float
+    goal_path_cost: float
+    goal_value: float
+    num_expansions: int
 

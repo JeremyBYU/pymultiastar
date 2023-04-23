@@ -27,10 +27,10 @@ def main():
         path_weight = 0.5,
     )
     planner = pmstar.PyMultiAStar(map_3d, **params)
-    path, path_cost, meta = planner.search_multiple(start_cell, goal_cells)
+    path, meta = planner.search_multiple(start_cell, goal_cells)
 
 
-    print(f"path: {path}, path_cost: {path_cost}, meta: {meta}")
+    print(f"path: {path}, meta: {meta}")
 
     o3d.visualization.draw([*geoms], lookat=[0, 0, 0], eye=[0, -20, 30], up=[0, 0, 1], title="World Viewer", on_init=init, show_ui=True)
 

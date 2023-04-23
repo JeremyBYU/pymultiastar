@@ -38,13 +38,13 @@ def run_maze(img_path: Path, maze_start=None, maze_end=None):
 
     planner = pmstar.PyMultiAStar(maze_data["map"], **params)
     t0 = perf_counter()
-    path, path_cost, meta = planner.search_multiple(
+    path, meta = planner.search_multiple(
         start_cell, goal_cells
     )
     t1 = perf_counter()
     dt = (t1-t0) * 1000
 
-    print(f"dt: {dt:.1f}ms, path: {path}, path_cost: {path_cost}, meta: {meta}")
+    print(f"dt: {dt:.1f}ms, path: {path},  meta: {meta}")
     new_image_path = write_path_to_maze(img_path, path)
     Image.open(new_image_path).show()
 
