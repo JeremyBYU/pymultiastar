@@ -1,3 +1,3 @@
 import logging
-logger = logging.getLogger('foo')
+logger = logging.getLogger('pymultiastar.geoplanner')
 logger.addHandler(logging.NullHandler())

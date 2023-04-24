@@ -3,11 +3,12 @@ import matplotlib as mpl
 import numpy as np
 
 import pymultiastar as pmstar
-from pymultiastar.visualization.vis3d_helpers import create_map, create_voxel_map
+from pymultiastar.visualization.vis3d_helpers import create_map, create_pcd_map
+
 
 def main():
     map_3d = create_map()
-    geoms = create_voxel_map(map_3d) 
+    geoms = create_pcd_map(map_3d) 
 
     def init(vis):
         vis.show_ground = True

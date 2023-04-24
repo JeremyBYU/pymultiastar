@@ -27,6 +27,12 @@ class PlannerKwargs(SuperDataClass):
     keep_nodes: bool = False
     path_w0: float = 1.0
 
+class Scenario(TypedDict):
+    name:str
+    details:str
+    position: Coord
+    zoom_start: int
+    active: bool
 
 class VoxelMeta(TypedDict):
     srid:str

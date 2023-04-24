@@ -22,7 +22,7 @@ def create_map(
 
 def convert_to_point_cloud(
     data, x_min=0.0, y_min=0.0, z_min=0.0, x_scale=1.0, y_scale=1.0, z_scale=1.0,
-    mask=None, cmap='viridis'
+    mask=None, cmap='viridis', color_by_height=False
 ):
     mask = mask if mask is not None else data > 0
     x, y, z = np.where(mask)
@@ -30,9 +30,11 @@ def convert_to_point_cloud(
     y = y_min + y * y_scale
     z = z_min + z * z_scale
 
-    values = data[mask].flatten()
-
     points = np.c_[x, y, z]
+    if color_by_height:
+        values = points[:, 2] / np.max(points[:, 2])
+    else:
+        values = data[mask].flatten()
     colors = mpl.colormaps.get_cmap(cmap)(values)[:, :3]
 
     pcd = o3d.geometry.PointCloud()
@@ -41,18 +43,15 @@ def convert_to_point_cloud(
 
     return pcd
 
-def create_voxel_map(map, obstacle_value=1.0):
+def create_pcd_map(map, obstacle_value=1.0):
     obstacle_mask = map == obstacle_value
     pf_mask = ((~obstacle_mask) & (map > 0))
     params = dict(x_min=0.0, y_min=0.0, z_min=0.0, x_scale=1.0, y_scale=1.0, z_scale=1.0)
-    pcd_obstacle = convert_to_point_cloud(map, mask=obstacle_mask, **params)
+    pcd_obstacle = convert_to_point_cloud(map, mask=obstacle_mask, color_by_height=True, **params)
     pcd_pf = convert_to_point_cloud(map, mask=pf_mask, **params)
 
-    voxel_obstacle = o3d.geometry.VoxelGrid.create_from_point_cloud(pcd_obstacle, voxel_size=1)
-    voxel_pf = o3d.geometry.VoxelGrid.create_from_point_cloud(pcd_pf, voxel_size=1)
-
-    obstacle = dict(name="Obstacles", geometry=voxel_obstacle)
-    pf = dict(name="Potential Field", geometry=voxel_pf)
+    obstacle = dict(name="Obstacles", geometry=pcd_obstacle)
+    pf = dict(name="Potential Field", geometry=pcd_pf)
     geoms = [obstacle, pf] if np.any(pf_mask) else [obstacle]
 
     return geoms

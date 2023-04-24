@@ -59,12 +59,15 @@ class GeoPlanner(object):
 
     def plan_multi_goal(
         self, start_position: GPS, ls_list: List[LandingSite], **kwargs
-    ):
-        """This will find the optimal goal from a set of goal_positions and a given starting position
+    ) -> GeoMultiPlannerResult | None:
+        """Will find the optimal landing site and path pair from a start position
 
-        Arguments:
-            start_position {([float x,float y, float z], int value)} -- List for starting position in world coordinates
-            goal_positions {List[([float x,float y, float z], int value)]} -- List of Tuples. Each tuple has an world coordinate and a goal value/risk.
+        Args:
+            start_position (GPS): The start position of the aircraft
+            ls_list (List[LandingSite]): A list of landing sites with the associated risk
+
+        Returns:
+            GeoMultiPlannerResult: The result of the planner
         """
 
         project_start, projected_goals = prepare_planning_args_optimized(
@@ -87,7 +90,7 @@ class GeoPlanner(object):
                     )
                 )
                 logger.error("{}".format(start_position))
-                return {"path_cost": np.inf, "path": [], "index": -1}
+                return None
         # This set is used to ensure that every goal as a UNIQUE cell location in the voxel grid.
         unique_goal_cell_set = set()
         # In case a bad goal has been give, keep this list to mark all the valid goals (landing sites)
@@ -162,62 +165,4 @@ class GeoPlanner(object):
             **meta,
         }
         return result
-
-
-# class Planning(object):
-#  
-#     def to_gps(self, plan):
-#         if len(plan) != 0:
-#             path_gps = [pyproj.transform(
-#                 self.proj_dist, self.proj_gps, *coord) for coord in plan]
-#         else:
-#             path_gps = pyproj.transform(self.proj_dist, self.proj_gps, *plan)
-#         return path_gps
-
-#     def plan(self, start_pos, goal_pos, index):
-#         # if debug:
-#         #     print(start_pos, goal_pos, index, debug)
-#         sc = self.convert(start_pos)
-#         gc = self.convert(goal_pos)
-
-#         # Determine if cells are bad (occupied)
-#         bad_start = self.cost_map[sc[0], sc[1], sc[2]] == np.inf
-#         bad_goal = self.cost_map[gc[0], gc[1], gc[2]] == np.inf
-#         if bad_start:
-#             # logging.debug("BAD START")
-#             # logging.debug("%r - %r", start_pos, goal_pos)
-#             sc_ = sc[:]  # makes copy
-#             sc = self.get_free_neighbor_cell(sc)
-#             if sc is None:
-#                 logging.error("ERROR - Bad Start Cell! Start Cell: {} - {}".format(
-#                     sc_, self.cost_map[sc_[0], sc_[1], sc_[2]]))
-#                 logging.error("{}, {}, {}".format(start_pos, goal_pos, index))
-#                 return {'path_cost': np.inf, 'path': [], 'index': index}
-#         if bad_goal:
-#             gc_ = gc[:]  # makes copy
-#             gc = self.get_free_neighbor_cell(gc) # looks at neighbors around the cell
-#             if gc is None:
-#                 # last chance, going vertically up only!
-#                 gc = self.get_first_free_cell(gc_, to_cell=False)
-#                 if gc is None:
-#                     # Wow this was a really bad goal.  Log the issue an review later
-#                     logging.error("ERROR - Bad Goal Cell! Start Cell: {} - {}. Goal Cell: {} - {}".format(
-#                         sc, self.cost_map[sc[0], sc[1], sc[2]], gc_, self.cost_map[gc_[0], gc_[1], gc_[2]]))
-#                     logging.error("{}, {}, {}".format(start_pos, goal_pos, index))
-#                     return {'path_cost': np.inf, 'path': [], 'index': index, 'time': np.nan}
-
-#         logging.debug("Start Cell: {} - {}. Goal Cell: {} - {}".format(sc,
-#                                                                      self.cost_map[sc[0], sc[1], sc[2]], gc, self.cost_map[gc[0], gc[1], gc[2]]))
-#         start_time = time.time()
-#         path_cells, path_cost = self.pma.search_single(sc, gc)
-#         elapsed_time = time.time() - start_time
-
-#         logging.debug("Path Risk: %s ", path_cost)
-#         # These are index coordinates! Convert to meters
-#         path_meters = [self.convert(cell, to_cell=False)
-#                        for cell in path_cells]
-
-#         path_length = get_dist(path_meters)
-#         # {'path_cost': dummy_path_risk(start_pos, goal_pos), 'path': path, 'index': index}
-#         return {'path_cost': path_cost, 'path': path_meters, 'goal_index': index, 'path_length': path_length, 'time': elapsed_time}
 
