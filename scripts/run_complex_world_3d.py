@@ -52,7 +52,10 @@ def plan_scenario(scenario: Scenario, cost_map_fp: Path, voxel_meta: VoxelMeta):
     logger.info(start_pos)
     logger.info(ls_list)
 
-    return dict(start_gps=start_pos, ls_list=ls_list, geo_planner=geo_planner)
+    result = geo_planner.plan_multi_goal(start_pos, ls_list)
+    logger.info(result)
+
+    return dict(start_gps=start_pos, ls_list=ls_list, geo_planner=geo_planner, plan_results=result)
 
 
 def run_world(world_name: str, cost_map_fp: Path, meta_fp: Path):
@@ -75,13 +78,13 @@ def run_world(world_name: str, cost_map_fp: Path, meta_fp: Path):
     scenario = scenarios[index]
 
     result = plan_scenario(scenario, cost_map_fp, voxel_meta)
-    landing_objects = create_landing_objects(**result)
+    landing_objects = create_landing_objects(**result) # type: ignore
 
     def init(vis):
         vis.show_ground = True
         vis.ground_plane = o3d.visualization.rendering.Scene.GroundPlane.XY
         vis.point_size = 7
-        vis.show_geometry("Potential Field", False)
+        # vis.show_geometry("Potential Field", False)
         vis.show_axes = True
 
     o3d.visualization.draw(

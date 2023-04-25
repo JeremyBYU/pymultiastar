@@ -58,7 +58,7 @@ class GeoPlanner(object):
         )
 
     def plan_multi_goal(
-        self, start_position: GPS, ls_list: List[LandingSite], **kwargs
+        self, start_position: GPS, ls_list: List[LandingSite]
     ) -> GeoMultiPlannerResult | None:
         """Will find the optimal landing site and path pair from a start position
 
@@ -75,7 +75,7 @@ class GeoPlanner(object):
         )
         # to cell position
         start_cell = voxel_projected_to_cell(project_start, self.voxel_meta)      
-        logger.debug(f"Start Cell: {start_cell}")
+        # logger.debug(f"Start Cell: {start_cell}")
         goal_cells:List[Tuple[Tuple[int, int, int], float]] = []
 
         # Checking on start and goal cell positions
@@ -153,12 +153,18 @@ class GeoPlanner(object):
             voxel_cell_to_projected(cell, self.voxel_meta)
             for cell in path_cells
         ]
+        path_projected_zero_origin = [
+            self.transform_projected_to_zero_origin(coord)
+            for coord in path_projected
+        ]
+
 
         path_length = get_path_dist(path_projected)
         # {'path_cost': dummy_path_risk(start_pos, goal_pos), 'path': path, 'index': index}
         result:GeoMultiPlannerResult = {
             "path_cells": path_cells,
             "path_projected": path_projected,
+            "path_projected_zero_origin": path_projected_zero_origin,
             "path_length": path_length,
             "time_ms": elapsed_time,
             "valid_landing_site_indices": valid_landing_site_indices,
@@ -173,6 +179,14 @@ class GeoPlanner(object):
     def transform_gps_to_projected_zero_origin(self, gps: GPS) -> Coord:
         # import ipdb; ipdb.set_trace()
         coord:Coord = self.transformer.transform(*gps.to_array())
+        x_meters = coord[0] - self.voxel_meta['xmin']
+        y_meters = coord[1] - self.voxel_meta['ymin']
+        z_meters = coord[2] - self.voxel_meta['zmin']
+        
+        return (x_meters, y_meters, z_meters)
+
+    def transform_projected_to_zero_origin(self, coord:Coord) -> Coord:
+        # import ipdb; ipdb.set_trace()
         x_meters = coord[0] - self.voxel_meta['xmin']
         y_meters = coord[1] - self.voxel_meta['ymin']
         z_meters = coord[2] - self.voxel_meta['zmin']
