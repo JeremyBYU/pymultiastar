@@ -4,12 +4,17 @@ from .types import LandingSite, GPS, VoxelMeta, ArrayFloatMxNxK, Coord, CoordPat
 from ..types import Cell
 from pyproj import Transformer
 
-def convert_cost_map_to_float(cost_map, flip_xy=True, normalize=True, set_max_value_to_inf=True):
+def convert_cost_map_to_float(cost_map, reverse_yaxis=True, normalize=True, set_max_value_to_inf=True):
     """Will convert a uint8 cost map to a float32
+
+
+    Note, the normal expectation is that the dimension are like so [y, x, z]
+    Also the y-axis is growing DOWN, like an image, if this was generated from https://bitbucket.org/umich_a2sys/create-voxel/src/master/
+
 
     Args:
         cost_map (np.ndarray): Three dimenstional cost map
-        flip_xy (bool, optional): Will flip the x and y axes of the map. Defaults to True.
+        reverse_yaxis (bool, optional): Will reverse y axes of the map. Defaults to True.
         normalize (bool, optional): Will normalize cost from 0 to 1.0. Defaults to True.
         set_max_value_to_inf (bool, optional): All max values will be mapped to np.inf. Defaults True.
 
@@ -17,8 +22,8 @@ def convert_cost_map_to_float(cost_map, flip_xy=True, normalize=True, set_max_va
         np.ndarray: Your 3D cost map in float32
     """
     cost_map = cost_map.astype(np.float32)
-    if flip_xy:
-        cost_map = np.flip(cost_map , 0) # flips the x and y axis
+    if reverse_yaxis:
+        cost_map = np.flip(cost_map, 0) # reverses the y-axis
     if normalize:
         max_value = np.max(cost_map)
         cost_map = cost_map / max_value # convert to float32
@@ -61,6 +66,13 @@ def voxel_cell_to_projected(coord:Cell, voxel_meta:VoxelMeta) -> Coord:
         voxel_meta['ymin'])
     z_meters:float = float(coord[2] * voxel_meta['zres'] + \
         voxel_meta['zmin'])
+
+    return (x_meters, y_meters, z_meters)
+
+def voxel_cell_to_projected_zero_origin(coord:Cell, voxel_meta:VoxelMeta) -> Coord:
+    x_meters:float = float(coord[1] * voxel_meta['xres'])
+    y_meters:float = float(coord[0] * voxel_meta['yres'])
+    z_meters:float = float(coord[2] * voxel_meta['zres'])
 
     return (x_meters, y_meters, z_meters)
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict, fields
-from typing import Dict, List, Tuple, TypedDict
+from typing import Dict, List, Tuple, TypedDict, Optional
 import numpy.typing as npt
 import numpy as np
 from ..types import ArrayFloatMxNxK, Cell, CellPath
@@ -31,8 +31,8 @@ class Scenario(TypedDict):
     name:str
     details:str
     position: Coord
-    zoom_start: int
     active: bool
+    landing_sites: Optional[List[Dict]]
 
 class VoxelMeta(TypedDict):
     srid:str

@@ -7,7 +7,7 @@ import numpy as np
 from pyproj import Transformer
 
 from ..types import ArrayFloatMxNxK
-from .types import (PlannerKwargs, VoxelMeta, GPS, LandingSite, GeoMultiPlannerResult)
+from .types import (PlannerKwargs, VoxelMeta, GPS, LandingSite, GeoMultiPlannerResult, Coord)
 from .helper import (
     convert_cost_map_to_float,
     prepare_planning_args_optimized,
@@ -54,7 +54,7 @@ class GeoPlanner(object):
         self.planner = pmstar.PyMultiAStar(self.cost_map, **planner_kwargs.to_dict())
 
         self.transformer = Transformer.from_crs(
-            "EPSG:4326", "EPSG:26917", always_xy=True
+            "EPSG:4326", voxel_meta["srid"]
         )
 
     def plan_multi_goal(
@@ -165,4 +165,18 @@ class GeoPlanner(object):
             **meta,
         }
         return result
+
+    def transform_gps_to_projected(self, gps: GPS) -> Coord:
+        coord:Coord = self.transformer.transform(*gps.to_array())
+        return coord
+
+    def transform_gps_to_projected_zero_origin(self, gps: GPS) -> Coord:
+        # import ipdb; ipdb.set_trace()
+        coord:Coord = self.transformer.transform(*gps.to_array())
+        x_meters = coord[0] - self.voxel_meta['xmin']
+        y_meters = coord[1] - self.voxel_meta['ymin']
+        z_meters = coord[2] - self.voxel_meta['zmin']
+        
+        return (x_meters, y_meters, z_meters)
+
 

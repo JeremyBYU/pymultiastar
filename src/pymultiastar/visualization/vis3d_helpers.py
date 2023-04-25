@@ -1,6 +1,10 @@
 import open3d as o3d
 import matplotlib as mpl
 import numpy as np
+from ..geoplanner.types import GPS, LandingSite, Coord
+from ..geoplanner import GeoPlanner
+from typing import List
+from .log import logger
 
 default_buildings = [
     [(1, 3), (3, 10), (0, 3), 255],
@@ -21,14 +25,14 @@ def create_map(
 
 
 def convert_to_point_cloud(
-    data, x_min=0.0, y_min=0.0, z_min=0.0, x_scale=1.0, y_scale=1.0, z_scale=1.0,
-    mask=None, cmap='viridis', color_by_height=False
+    data, xmin=0.0, ymin=0.0, zmin=0.0, xres=1.0,
+    mask=None, cmap='viridis', color_by_height=False, **kwargs
 ):
     mask = mask if mask is not None else data > 0
-    x, y, z = np.where(mask)
-    x = x_min + x * x_scale
-    y = y_min + y * y_scale
-    z = z_min + z * z_scale
+    y, x, z = np.where(mask) #notice that the first dimension is y!
+    x = xmin + x * xres
+    y = ymin + y * xres
+    z = zmin + z * xres
 
     points = np.c_[x, y, z]
     if color_by_height:
@@ -43,15 +47,43 @@ def convert_to_point_cloud(
 
     return pcd
 
-def create_pcd_map(map, obstacle_value=1.0):
+def create_pcd_map(map, obstacle_value=1.0, **kwargs):
     obstacle_mask = map == obstacle_value
     pf_mask = ((~obstacle_mask) & (map > 0))
-    params = dict(x_min=0.0, y_min=0.0, z_min=0.0, x_scale=1.0, y_scale=1.0, z_scale=1.0)
-    pcd_obstacle = convert_to_point_cloud(map, mask=obstacle_mask, color_by_height=True, **params)
-    pcd_pf = convert_to_point_cloud(map, mask=pf_mask, **params)
+    pcd_obstacle = convert_to_point_cloud(map, mask=obstacle_mask, color_by_height=True, **kwargs)
+    pcd_pf = convert_to_point_cloud(map, mask=pf_mask, **kwargs)
 
     obstacle = dict(name="Obstacles", geometry=pcd_obstacle)
     pf = dict(name="Potential Field", geometry=pcd_pf)
     geoms = [obstacle, pf] if np.any(pf_mask) else [obstacle]
 
     return geoms
+
+
+def create_landing_objects(start_gps:GPS, ls_list:List[LandingSite], geo_planner: GeoPlanner):
+    pass
+    start_coords = geo_planner.transform_gps_to_projected_zero_origin(start_gps)
+    start_object = dict(name="Start Position", geometry=create_object(start_coords, color=[0.0, 0.0, 1.0]))
+    logger.debug(f"Projected Start Coords {start_coords}")
+   
+   
+    ls_coords = list(map(lambda x: geo_planner.transform_gps_to_projected_zero_origin(x.centroid),ls_list))
+    ls_objects = list(map(lambda x: create_object(x),ls_coords))
+    logger.debug(f"Projected LS Coords {ls_coords}")
+    ls_group = o3d.geometry.TriangleMesh()
+    for ob in ls_objects:
+        ls_group += ob
+    ls_group = dict(name="Landing Sites", geometry=ls_group)
+
+    return [start_object, ls_group]
+
+def create_object(object: Coord, object_type="ico", color=[1.0, 0.0, 0.0], radius=3.0):
+    object_3d = None
+    if object_type == "ico":
+        object_3d = o3d.geometry.TriangleMesh.create_icosahedron(radius=radius)
+
+    object_3d.translate(list(object))
+    object_3d.paint_uniform_color(color)
+    object_3d.compute_vertex_normals()
+    object_3d.compute_triangle_normals()
+    return object_3d
