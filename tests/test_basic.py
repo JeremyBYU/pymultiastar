@@ -22,14 +22,17 @@ def small_maze_2d():
 ], ids=["balanced", "high_goal_weight", "low_goal_weight"])
 def test_small_map(small_map, goal_weight, path_weight, expected_path):
     params = dict(
+        allow_diag=True,
         map_res=1.0,
         obstacle_value=1.0, # map ranges from 0-1 values. An obstacle will be the value 1.0
         normalizing_path_cost = 3.0, # normalize path distance by dividing by this number
         goal_weight=goal_weight,
-        path_weight=path_weight
+        path_weight=path_weight,
+        keep_nodes=False,
+        path_w0=1.0
     )
-    planner = pmstar.PyMultiAStar(small_map['map'], **params)
-    path, path_cost, meta = planner.search_multiple(small_map['start_cell'], small_map['goal_cells'])
+    planner = pmstar.PyMultiAStar(small_map['map'], **params) # type: ignore
+    path, meta = planner.search_multiple(small_map['start_cell'], small_map['goal_cells'])
 
     np.testing.assert_allclose(path, expected_path)
 
