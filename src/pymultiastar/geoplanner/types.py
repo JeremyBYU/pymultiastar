@@ -33,6 +33,7 @@ class Scenario(TypedDict):
     position: Coord
     active: bool
     landing_sites: Optional[List[Dict]]
+    planner_kwargs: Optional[Dict]
 
 class VoxelMeta(TypedDict):
     srid:str
