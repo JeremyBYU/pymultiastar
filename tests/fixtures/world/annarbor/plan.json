@@ -1,0 +1,94 @@
+{
+    "cities": [
+        {
+            "name": "Ann Arbor",
+            "cost_map_fp": "",
+            "voxel_meta": {
+                "srid": "epsg:26917",
+                "nrows": 792,
+                "ncols": 792,
+                "nslices": 61,
+                "xres": 2,
+                "yres": 2,
+                "zres": 2,
+                "xmin": 273113.71,
+                "ymin": 4682987.55,
+                "zmin": 245.24000549316406
+            },
+            "map_bbox": {
+                "minlon": 273110.5474,
+                "maxlon": 274696.77,
+                "minlat": 4682986.22,
+                "maxlat": 4684573.753,
+                "projection": "EPSG:26917"
+            },
+            "planner_kwargs": {
+                "allow_diag": true,
+                "map_res": 2.0,
+                "obstacle_value": 1.0,
+                "normalizing_path_cost": 200.0,
+                "goal_weight": 0.5,
+                "path_weight": 0.5,
+                "keep_nodes": false,
+                "path_w0": 1.0
+            },
+            "scenarios": [
+                {
+                    "name": "Scenario 1",
+                    "details": "South East - Few Building Many Trees",
+                    "position": [
+                        42.271740,
+                        -83.735778,
+                        270.0
+                    ],
+                    "active": false,
+                    "landing_sites": [
+                        {
+                            "osm_id": 459948086,
+                            "radius": 8.71678689290668,
+                            "landing_site_risk": 0.2970436067094503,
+                            "position": [
+                                42.27052,
+                                -83.73692,
+                                273.65
+                            ],
+                            "planner_kwargs":{
+                                "normalizing_path_cost": 175.0
+                            }
+                        },
+                        {
+                            "osm_id": 468944455,
+                            "radius": 4.01958993211309,
+                            "landing_site_risk": 0.5251571215205322,
+                            "position": [
+                                42.27106,
+                                -83.73654,
+                                273.71
+                            ]
+                        },
+                        {
+                            "osm_id": 473414093,
+                            "radius": 3.7825532318500055,
+                            "landing_site_risk": 0.535970290151188,
+                            "position": [
+                                42.27094,
+                                -83.73819,
+                                272.03
+                            ]
+                        },
+                        {
+                            "osm_id": 572952539,
+                            "radius": 4.5689250966093615,
+                            "landing_site_risk": 0.6990376743808593,
+                            "position": [
+                                42.27161,
+                                -83.73729,
+                                266.74
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
