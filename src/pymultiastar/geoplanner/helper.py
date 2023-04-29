@@ -1,8 +1,11 @@
-import numpy as np
 from typing import List, Tuple
-from .types import LandingSite, GPS, VoxelMeta, ArrayFloatMxNxK, Coord, CoordPath
-from ..types import Cell
+
+import numpy as np
 from pyproj import Transformer
+
+from ..types import Cell
+from .types import GPS, ArrayFloatMxNxK, Coord, CoordPath, LandingSite, VoxelMeta
+from .log import logger
 
 def convert_cost_map_to_float(cost_map, reverse_yaxis=True, normalize=True, set_max_value_to_inf=True):
     """Will convert a uint8 cost map to a float32
@@ -107,3 +110,7 @@ def get_path_dist(path:CoordPath) -> float:
         b = np.array(path[i + 1], dtype=np.float32)
         dist += float(np.linalg.norm(a - b))
     return dist
+
+
+
+

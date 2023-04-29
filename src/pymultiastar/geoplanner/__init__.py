@@ -1,4 +1,4 @@
-from .geoplanner import GeoPlanner
+from .geoplanner import GeoPlanner, create_planner_from_configuration
 from .types import (
     GeoMultiPlannerResult,
     PlannerKwargs,
@@ -17,4 +17,5 @@ __all__ = [
     "GPS",
     "LandingSite",
     "Scenario",
+    "create_planner_from_configuration"
 ]

@@ -20,18 +20,18 @@ dependencies = [
 ]
 
 [build-system]
-requires = ["scikit-build-core>=0.2.1", "pybind11"]
+requires = ["scikit-build-core>=0.3.3", "pybind11"]
 build-backend = "scikit_build_core.build"
 
 [project.optional-dependencies]
-vis = ["open3d>=0.17", "matplotlib", "ipdb", "Pillow"]
 geo = ["pyproj>=3.0"]
 test = ["pytest", "Pillow"]
-dev = ["black", "pymultiastar[vis,geo,test]"]
+dev = ["black", "open3d>=0.17", "matplotlib", 
+      "rich", "typer", "ipdb", "Pillow", 
+      "pymultiastar[geo,test]"]
 
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true
-sdist.exclude = [".pyi"]
 
 [tool.cibuildwheel]
 test-command = "pytest {project}/tests"
@@ -41,7 +41,5 @@ build-verbosity = 1
 
 
 [tool.ruff]
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 line-length = 100
-# Assume Python 3.10.
 target-version = "py310"
