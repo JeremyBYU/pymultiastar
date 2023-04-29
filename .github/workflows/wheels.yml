@@ -50,7 +50,7 @@ jobs:
         CIBW_ARCHS_MACOS: universal2
         CIBW_ARCHS_WINDOWS: auto ARM64
         CIBW_ARCHS_LINUX: auto64
-        CIBW_SKIP: "cp27-* cp35-* cp36-* pp* *musllinux*"
+        CIBW_SKIP: "cp27-* cp35-* cp36-* cp37-* cp38-* pp* *musllinux*"
 
     - name: Verify clean directory
       run: git diff --exit-code
