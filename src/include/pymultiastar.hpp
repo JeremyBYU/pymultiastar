@@ -240,6 +240,16 @@ public:
     return path1D;
   }
 
+  void set_normalizing_path_cost(float cost)
+  {
+    normalizing_path_cost = cost;
+  }
+
+  float get_normalizing_path_cost()
+  {
+    return normalizing_path_cost;
+  }
+
 private:
   pybind11::array_t<float> map;
   // std::array<int, 3> start_cell;

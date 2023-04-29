@@ -29,9 +29,9 @@ class PlannerKwargs(SuperDataClass):
 
 class Scenario(TypedDict):
     name:str
-    details:str
-    position: Coord
+    position: Coord # assumed to be in GPS!
     active: bool
+    details:Optional[str]
     landing_sites: Optional[List[Dict]]
     planner_kwargs: Optional[Dict]
 
