@@ -46,7 +46,7 @@ jobs:
 
     - uses: pypa/cibuildwheel@v2.12.1
       env:
-        CIBW_TEST_REQUIRES: pytest
+        CIBW_TEST_REQUIRES: pytest pyproj>=3.0
         CIBW_ARCHS_MACOS: universal2
         CIBW_ARCHS_WINDOWS: auto ARM64
         CIBW_ARCHS_LINUX: auto64

@@ -15,7 +15,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11"
 ]
 dependencies = [
-  "numpy>=1.15"
+  "numpy>=1.15",
 ]
 
 [build-system]
@@ -24,7 +24,7 @@ build-backend = "scikit_build_core.build"
 
 [project.optional-dependencies]
 geo = ["pyproj>=3.0"]
-test = ["pytest", "Pillow"]
+test = ["pytest", "Pillow", "pyproj>=3.0"]
 dev = ["black", "open3d>=0.17", "matplotlib", 
       "rich", "typer", "ipdb", "Pillow", 
       "pymultiastar[geo,test]"]
