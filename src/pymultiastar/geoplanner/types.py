@@ -1,6 +1,5 @@
 from dataclasses import dataclass, asdict, fields
 from typing import Dict, List, Tuple, TypedDict, Optional
-import numpy.typing as npt
 import numpy as np
 from ..types import ArrayFloatMxNxK, Cell, CellPath
 

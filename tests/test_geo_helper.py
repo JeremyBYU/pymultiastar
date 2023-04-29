@@ -1,5 +1,4 @@
 import numpy as np
-import pymultiastar as pmstar
 import pytest
 from pymultiastar.geoplanner.types import GPS
 
