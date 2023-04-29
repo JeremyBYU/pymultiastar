@@ -1,6 +1,6 @@
 import time
 import pymultiastar as pmstar
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from pathlib import Path
 import json
 
@@ -60,7 +60,7 @@ class GeoPlanner(object):
 
     def plan_multi_goal(
         self, start_position: GPS, ls_list: List[LandingSite]
-    ) -> GeoMultiPlannerResult | None:
+    ) -> Optional[GeoMultiPlannerResult]:
         """Will find the optimal landing site and path pair from a start position
 
         Args:
