@@ -77,6 +77,7 @@ class LandingSite(SuperDataClass):
 
 
 class GeoMultiPlannerResult(TypedDict):
+    start_position: GPS
     path_cells: CellPath
     path_projected: CoordPath
     path_projected_zero_origin: CoordPath

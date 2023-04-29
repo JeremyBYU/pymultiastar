@@ -1,5 +1,6 @@
 from typing import List, Tuple
-
+import dataclasses
+import json
 import numpy as np
 from pyproj import Transformer
 
@@ -111,6 +112,15 @@ def get_path_dist(path:CoordPath) -> float:
         dist += float(np.linalg.norm(a - b))
     return dist
 
+
+
+class EnhancedJSONEncoder(json.JSONEncoder):
+        def default(self, o):
+            if dataclasses.is_dataclass(o):
+                return dataclasses.asdict(o)
+            if isinstance(o, np.ndarray):
+                return o.tolist()
+            return super().default(o)
 
 
 

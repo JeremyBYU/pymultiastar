@@ -163,6 +163,7 @@ class GeoPlanner(object):
         path_length = get_path_dist(path_projected)
         # {'path_cost': dummy_path_risk(start_pos, goal_pos), 'path': path, 'index': index}
         result:GeoMultiPlannerResult = {
+            "start_position": start_position,
             "path_cells": path_cells,
             "path_projected": path_projected,
             "path_projected_zero_origin": path_projected_zero_origin,

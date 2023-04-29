@@ -1,7 +1,10 @@
 from pathlib import Path
 import typer
+import json
+import uuid
 import logging
 from pymultiastar.visualization.vis3d_helpers import visualize_plan
+from pymultiastar.geoplanner.helper import EnhancedJSONEncoder
 from rich.prompt import Prompt
 
 from pymultiastar.geoplanner import (
@@ -16,8 +19,10 @@ from log import logger
 
 
 app = typer.Typer()
+THIS_DIR = Path(__file__).parent
 WORLD_DIR = Path(__file__).parent.parent / "tests" / "fixtures" / "world"
 ANNARBOR_PLAN = WORLD_DIR / "annarbor/plan.json"
+OUTPUT_DIR = THIS_DIR.parent / "output"
 
 def plan_scenario(scenario: Scenario, geo_planner: GeoPlanner):
     start_pos = GPS(*scenario["position"])
@@ -59,6 +64,9 @@ def run_city_plan(
         LogLevel.INFO.value,
         help="Specify log level",
     ),
+    run_all_scenarios:bool = False,
+    visualize:bool = False,
+    output_dir:Path = OUTPUT_DIR
 ):
     # set log level
     logger.setLevel(getattr(logging, log_level.value))
@@ -69,16 +77,31 @@ def run_city_plan(
     voxel_meta = planner_data["voxel_meta"]
     scenarios = planner_data["scenarios"]
 
-    # choose a scenario in the planner data
-    scenario_str = Prompt.ask(
-        "Choose a scenario",
-        choices=[scenario["name"] for scenario in scenarios],
-        default=scenarios[0]["name"],
-    )
-    scenario = next(item for item in scenarios if item["name"] == scenario_str)
-    # plan the scenario and visualize
-    plan_result = plan_scenario(scenario, geo_planner)
-    visualize_plan(planner_data, plan_result, xres=voxel_meta["xres"])
+    scenario_results = []
+    chosen_scenarios = []
+    if not run_all_scenarios:
+        # choose a scenario in the planner data
+        scenario_str = Prompt.ask(
+            "Choose a scenario",
+            choices=[scenario["name"] for scenario in scenarios],
+            default=scenarios[0]["name"],
+        )
+        scenario = next(item for item in scenarios if item["name"] == scenario_str)
+        chosen_scenarios.append(scenario)
+
+    for scenario in chosen_scenarios:
+        scenario_result = plan_scenario(scenario, geo_planner)
+        scenario_results.append(scenario_result['plan_results'])
+        if visualize:
+            visualize_plan(planner_data, scenario_result, xres=voxel_meta["xres"])
+
+    file_name = planner_data.get('name', str(uuid.uuid4())) + ".json"
+    output_fp = output_dir / file_name
+    logger.info("Writing file to %s", output_fp)
+    with open(output_fp, 'w') as fh:
+        json.dump(scenario_results, fh, cls=EnhancedJSONEncoder, indent=2)
+
+
 
 
 if __name__ == "__main__":
