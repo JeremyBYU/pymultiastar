@@ -40,7 +40,7 @@
                 19.0
             ],
             "planner_kwargs": {
-                "normalizing_path_cost": 250.0
+                "normalizing_path_cost": 150.0
             },
             "landing_sites": [
                 {
@@ -134,7 +134,7 @@
                     "position": [
                         40.75599,
                         -73.98057,
-                        36
+                        36.01
                     ]
                 },
                 {
