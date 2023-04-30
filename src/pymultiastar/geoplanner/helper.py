@@ -83,11 +83,15 @@ def voxel_cell_to_projected_zero_origin(coord:Cell, voxel_meta:VoxelMeta) -> Coo
 
 def get_free_neighbor_cell(cell:Cell, cost_map:ArrayFloatMxNxK):
     neighbors = [
-        (cell[0], cell[1], cell[2] + 1),
-        (cell[0] + 1, cell[1], cell[2]),
-        (cell[0] - 1, cell[1], cell[2]),
-        (cell[0], cell[1] + 1, cell[2]),
-        (cell[0], cell[1] - 1, cell[2]),
+        (cell[0], cell[1], cell[2] + 1), # z-up
+        (cell[0] + 1, cell[1], cell[2]), # y-up
+        (cell[0] - 1, cell[1], cell[2]), # y-down
+        (cell[0], cell[1] + 1, cell[2]), # x-right
+        (cell[0], cell[1] - 1, cell[2]), # x-left
+        (cell[0] + 1, cell[1], cell[2] + 1), # y-up, z-up
+        (cell[0] - 1, cell[1], cell[2] + 1), # y-down, z-up
+        (cell[0], cell[1] + 1, cell[2] + 1), # x-right, z-up
+        (cell[0], cell[1] - 1, cell[2] + 1), # x-left, z-up
     ]
     for n in neighbors:
         try:

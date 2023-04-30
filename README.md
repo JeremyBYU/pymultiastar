@@ -30,7 +30,7 @@ $$
 
 ![Tradeoff](./assets/imgs/tradeoff.png)
 
-## What precisely are these two objectives and how do they relate to the planner?
+**What precisely are these two objectives and how do they relate to the planner?**
 
 See the following sections in the paper linked above: 
 

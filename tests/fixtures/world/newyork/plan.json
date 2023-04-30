@@ -1,0 +1,153 @@
+{
+    "name": "New York",
+    "cost_map_fp": "./voxel_map.npy",
+    "voxel_meta": {
+        "srid": "epsg:26918",
+        "nrows": 1500,
+        "ncols": 750,
+        "nslices": 61,
+        "xres": 2,
+        "yres": 2,
+        "zres": 2,
+        "xmin": 585000.0,
+        "ymin": 4510500.0,
+        "zmin": 2.779900074005127
+    },
+    "map_bbox": {
+        "minlon": 584999.9992,
+        "maxlon": 586500.001,
+        "minlat": 4510499.9896,
+        "maxlat": 4513500.008,
+        "projection": "EPSG:26918"
+    },
+    "planner_kwargs": {
+        "allow_diag": true,
+        "map_res": 2.0,
+        "obstacle_value": 1.0,
+        "normalizing_path_cost": 250.0,
+        "goal_weight": 0.5,
+        "path_weight": 0.5,
+        "keep_nodes": false,
+        "path_w0": 1.0
+    },
+    "scenarios": [
+        {
+            "name": "Scenario 1",
+            "details": "South West - Many Buildings",
+            "position": [
+                40.746077,
+                -73.99050,
+                19.0
+            ],
+            "planner_kwargs": {
+                "normalizing_path_cost": 250.0
+            },
+            "landing_sites": [
+                {
+                    "osm_id": 248144152,
+                    "radius": 4.9345413813409476,
+                    "landing_site_risk": 0.3863699292413133,
+                    "position": [
+                        40.74608, 
+                        -73.99103,
+                        18.6299
+                    ]
+                },
+                {
+                    "osm_id": 468944455,
+                    "radius": 3.750448896894876,
+                    "landing_site_risk":0.4339138356254466,
+                    "position": [
+                        40.74629, 
+                        -73.99006,
+                        25.74
+                    ]
+                },
+                {
+                    "osm_id": 265042541,
+                    "radius": 3.4143607089859525,
+                    "landing_site_risk": 0.4744283841553961,
+                    "position": [
+                        40.74612,
+                        -73.9902,
+                        30.39
+                    ]
+                },
+                {
+                    "osm_id": 248144135,
+                    "radius": 2.422805489687256,
+                    "landing_site_risk":0.4824629741053187,
+                    "position": [
+                        40.74596, 
+                        -73.99101,
+                        25.04
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Scenario 2",
+            "details": "Josephs Special",
+            "position": [
+                40.7553588,
+                -73.9812578,
+                70
+            ],
+            "planner_kwargs": {
+                "normalizing_path_cost": 250.0
+            },
+            "landing_sites": [
+                {
+                    "osm_id": 266170577,
+                    "radius": 2.161701491,
+                    "landing_site_risk": 0.59168539,
+                    "position": [
+                        40.75568, 
+                        -73.98046,
+                        36.31
+                    ]
+                },
+                {
+                    "osm_id": 266170748,
+                    "radius": 2.168545298,
+                    "landing_site_risk":0.591475707,
+                    "position": [
+                        40.75562,
+                        -73.9803,
+                        37.91
+                    ]
+                },
+                {
+                    "osm_id": 266170651,
+                    "radius": 2.207302941,
+                    "landing_site_risk": 0.587574072,
+                    "position": [
+                        40.75643,
+                        -73.9805,
+                        38.13
+                    ]
+                },
+                {
+                    "osm_id": 266170643,
+                    "radius": 2.106129246,
+                    "landing_site_risk":0.580757639,
+                    "position": [
+                        40.75599,
+                        -73.98057,
+                        36
+                    ]
+                },
+                {
+                    "osm_id": 266170638,
+                    "radius": 2.181229521,
+                    "landing_site_risk":0.565174989,
+                    "position": [
+                        40.75607,
+                        -73.98039,
+                        40.29
+                    ]
+                }
+            ]
+        }
+    ]
+}
