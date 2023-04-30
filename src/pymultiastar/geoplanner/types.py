@@ -28,9 +28,9 @@ class PlannerKwargs(SuperDataClass):
 
 class Scenario(TypedDict):
     name:str
-    position: Coord # assumed to be in GPS!
-    active: bool
     details:Optional[str]
+    position: Coord # assumed to be in GPS!
+    active: Optional[bool]
     landing_sites: Optional[List[Dict]]
     planner_kwargs: Optional[Dict]
 
@@ -46,6 +46,13 @@ class VoxelMeta(TypedDict):
     ymin:float
     zmin:float
 
+class Plan(TypedDict):
+    name:str
+    cost_map_fp: str
+    voxel_meta: VoxelMeta
+    map_bbox: Optional[Dict]
+    planner_kwargs: PlannerKwargs
+    scenarios: List[Scenario]
 @dataclass
 class GPS():
     lat: float
