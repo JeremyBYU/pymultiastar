@@ -28,7 +28,7 @@ $$
 r_t = w_l \cdot r_l + w_p · r_p
 $$
 
-![Tradeoff](./assets/imgs/tradeoff.png)
+![Tradeoff](https://raw.githubusercontent.com/JeremyBYU/pymultiastar/master/assets/imgs/tradeoff.png)
 
 **What precisely are these two objectives and how do they relate to the planner?**
 
@@ -51,7 +51,11 @@ Binary Wheels are provided for you on `PyPi`:
 
 ## How to use
 
-TBD
+Below are some examples:
+
+1. `run_simple_world_3d.py`. Shows a very simple example of a small 3D world with multiple goals.
+2. `run_maze_2d.py` - Demonstrates that 2D A* path planning is a subset of the Multi-Goal Planner. It loads a 2D image of a maze as a single slice in a 3D world and has only 1 goal. 
+3. `run_scenarios.py` - Shows how to use the GeoPlanner and planning in a 3D world.
 
 ## Notes
 

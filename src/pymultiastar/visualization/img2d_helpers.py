@@ -2,6 +2,7 @@ import numpy as np
 from pathlib import Path
 from PIL import Image, ImageDraw
 import shutil
+from .log import logger
 
 def get_maze(img_path: Path, offset=3):
     """This will load an image of maze into a 3D numpy array
@@ -14,8 +15,8 @@ def get_maze(img_path: Path, offset=3):
         dict: Returns a dictionary of maze data
     """
     img = np.asarray(Image.open(img_path))
-    print(f"Maze name: {img_path.name}, Shape: {img.shape}")
-    print(f"Unique values: {np.unique(img)}")
+    logger.debug(f"Maze name: {img_path.name}, Shape: {img.shape}")
+    logger.debug(f"Unique values: {np.unique(img)}")
     # convert to float and an empty third dimension
     img_f = np.expand_dims((img / np.max(img)).astype(np.float32), axis=2)
     # Best case scenario is a diagonal path, lets guess it will be 50% bigger
