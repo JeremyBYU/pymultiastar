@@ -1,20 +1,13 @@
-import open3d as o3d
-import matplotlib as mpl
 import numpy as np
 
 import pymultiastar as pmstar
-from pymultiastar.visualization.vis3d_helpers import create_map, create_pcd_map
+from pymultiastar.visualization.vis3d_helpers import create_map, create_pcd_map, visualize_world
 
 
 def main():
     map_3d = create_map()
-    geoms = create_pcd_map(map_3d) 
 
-    def init(vis):
-        vis.show_ground = True
-        vis.ground_plane = o3d.visualization.rendering.Scene.GroundPlane.XY
-
-    start_cell = [0,0,1]
+    start_cell = (0,0,1)
     goal_cells = [([9, 9, 3], 2), ([5,9,2], 4)]
 
     # this is the diagonal from the origin of the map to the top right (opposite corners of a cube)
@@ -29,11 +22,10 @@ def main():
     )
     planner = pmstar.PyMultiAStar(map_3d, **params)
     path, meta = planner.search_multiple(start_cell, goal_cells)
-
-
     print(f"path: {path}, meta: {meta}")
-
-    o3d.visualization.draw([*geoms], lookat=[0, 0, 0], eye=[0, -20, 30], up=[0, 0, 1], title="World Viewer", on_init=init, show_ui=True)
+    
+    geoms = create_pcd_map(map_3d, ds_voxel_size=1.0)
+    visualize_world(geoms, point_size=25)
 
 
 if __name__ == "__main__":

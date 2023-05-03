@@ -8,14 +8,11 @@ from typing import List
 from .log import logger
 
 default_buildings = [
-    [(1, 3), (3, 10), (0, 3), 255],
-    [(4, 8), (3, 5), (0, 5), 255],
-    [(6, 8), (6, 10), (0, 3), 255],
+    [(7, 12), (7, 12), (0, 12 ), 255],
 ]
 
-
 def create_map(
-    shape=(10, 10, 5), buildings=default_buildings, dtype=np.float32, normalize=True
+    shape=(20, 30, 15), buildings=default_buildings, dtype=np.float32, normalize=True
 ):
     data = np.zeros(shape, dtype=dtype)
     for x, y, z, value in buildings:
@@ -56,16 +53,26 @@ def convert_to_point_cloud(
     return pcd
 
 
-def create_pcd_map(map, obstacle_value=1.0, **kwargs):
+def create_pcd_map(map, obstacle_value=1.0, ds_voxel_size=4.0, **kwargs):
     obstacle_mask = map == obstacle_value
     # pf_mask = (~obstacle_mask) & (map > 0)
     pcd_obstacle = convert_to_point_cloud(
         map, mask=obstacle_mask, color_by_height=True, **kwargs
     )
     # only way to make work better....
-    pcd_obstacle = pcd_obstacle.voxel_down_sample(voxel_size=4.0)
+    pcd_obstacle = pcd_obstacle.voxel_down_sample(voxel_size=ds_voxel_size)
     obstacle = dict(name="Obstacles", geometry=pcd_obstacle)
 
+    xres = kwargs.get('xres', 1.0)
+    i, j, k = map.shape
+    map_bounds = np.array([
+        [0, 0, 0],
+        [0, i * xres, 0],
+        [j*xres, i*xres, 0],
+        [j*xres, 0, 0],
+        [0, 0, 0],
+    ])
+    line_set = dict(name="Map Bounds", geometry=create_line(map_bounds))
     # when the point cloud is bigger than 7_000_000 points it will reappear if deselected
     # this was just a test to prove it
     # print(pcd_obstacle)
@@ -78,7 +85,7 @@ def create_pcd_map(map, obstacle_value=1.0, **kwargs):
 
     # pf = dict(name="Potential Field", geometry=pcd_pf)
     # geoms = [obstacle, pf] if np.any(pf_mask) else [obstacle]
-    geoms = [obstacle]
+    geoms = [line_set, obstacle]
 
     return geoms
 
@@ -138,6 +145,31 @@ def create_line(points, color=[0, 1, 0]):
     line_set.paint_uniform_color(color)
     return line_set
 
+def visualize_world(all_geoms, look_at=None, eye=None, point_size=7):
+
+    def init(vis):
+        vis.show_ground = True
+        vis.ground_plane = o3d.visualization.rendering.Scene.GroundPlane.XY  # type: ignore
+        vis.point_size = point_size
+        vis.show_axes = True
+
+    if eye is None or look_at is None:
+        boundary = all_geoms[0]['geometry'].get_axis_aligned_bounding_box()
+        look_at = boundary.get_center()
+        extent = boundary.get_extent()
+        eye = [extent[0]/2, -extent[1]/1.5, extent[1]]
+
+    logger.info("Please exit by closing the 3D Visualization Window!")
+    o3d.visualization.draw(  # type: ignore
+        all_geoms,
+        lookat=look_at,
+        eye=eye,
+        up=[0, 0, 1],
+        title="World Viewer",
+        on_init=init,
+        show_ui=True,
+    )
+
 def visualize_plan(planner_data, plan_result, xres=2.0):
     logger.info("Loading Map for Visualization ...")
 
@@ -149,19 +181,22 @@ def visualize_plan(planner_data, plan_result, xres=2.0):
     world_geoms = create_pcd_map(map_3d, obstacle_value=1.0, xres=xres)
     logger.info("Finished Loaded Map!")
 
-    def init(vis):
-        vis.show_ground = True
-        vis.ground_plane = o3d.visualization.rendering.Scene.GroundPlane.XY  # type: ignore
-        vis.point_size = 7
-        vis.show_axes = True
+    all_geoms = [*world_geoms, *landing_objects,]
+    visualize_world(all_geoms)
 
-    logger.info("Please exit by closing the 3D Visualization Window!")
-    o3d.visualization.draw(  # type: ignore
-        [*world_geoms, *landing_objects],
-        lookat=[375, 375, 0],
-        eye=[375, -100, 100],
-        up=[0, 0, 1],
-        title="World Viewer",
-        on_init=init,
-        show_ui=True,
-    )
+    # def init(vis):
+    #     vis.show_ground = True
+    #     vis.ground_plane = o3d.visualization.rendering.Scene.GroundPlane.XY  # type: ignore
+    #     vis.point_size = 7
+    #     vis.show_axes = True
+
+    # logger.info("Please exit by closing the 3D Visualization Window!")
+    # o3d.visualization.draw(  # type: ignore
+    #     [*world_geoms, *landing_objects],
+    #     lookat=[375, 375, 0],
+    #     eye=[375, -100, 100],
+    #     up=[0, 0, 1],
+    #     title="World Viewer",
+    #     on_init=init,
+    #     show_ui=True,
+    # )
