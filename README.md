@@ -1,14 +1,14 @@
 # Multi-Goal A-star
 
-This repo contains code to search for **multiple** goals with **heterogenous** values using a 3D A* **discrete** planner. The majority of the code is written in C++ with Python bindings. This planner was used in the paper [Map-Based Planning for Small Unmanned Aircraft Rooftop Landing](https://drive.google.com/file/d/1Sy0I8I8nsuy1xv1tFh_W6_Gazcp7pW9M/view?usp=share_link)
+This repo contains code to search for **multiple** goals with **heterogenous** values using a 3D A-star **discrete** planner. The majority of the code is written in C++ with Python bindings. This planner was used in the paper [Map-Based Planning for Small Unmanned Aircraft Rooftop Landing](https://drive.google.com/file/d/1Sy0I8I8nsuy1xv1tFh_W6_Gazcp7pW9M/view?usp=share_link)
 
 **What do you mean by discrete?**
 
-The map provided should be a 3D voxel grid(i, j, k), which the planner searches. This grid is a 3D Numpy array. A cell with the value 0.0 is considered free space. A cell with the value 1.0 is considered an obstacle and cannot be traversed (this value is configurable). Values between 0.0 and 1.0 can be traversed but with a penalty (penalty weight is configurable).
+The map provided should be a 3D voxel grid(i, j, k), a 3D NumPy array, which the planner searches. A cell with the value 0.0 is considered free space. A cell with the value 1.0 is considered an obstacle and cannot be traversed (this value is configurable). Values between 0.0 and 1.0 can be traversed but with a penalty (penalty weight is configurable).
 
 **What do you mean by multiple goals with heterogenous values?**
 
-A normal A* planner has a start location and one goal. This Multi-Goal planner allows you to provide multiple goal cells each having different values. Goals with lower values are more desirable. This planner will try to find the optimal **goal** *and* **path** which minimizes an objective function. It must be understood that the planner doesn't just find a path. It finds the goal and the corresponding optimal path that minimizes some larger objective function. 
+A normal A-star planner has a start location and one goal. This Multi-Goal planner allows you to provide multiple goal cells each having different values. Goals with lower values are more desirable. This planner will try to find the optimal **goal** *and* **path** which minimizes an objective function. It must be understood that the planner doesn't just find a path. It finds the goal and the corresponding optimal path that minimizes some larger objective function. 
 
 **What is the objective function?**
 
@@ -54,8 +54,8 @@ Binary Wheels are provided for you on `PyPi`:
 Below are some examples:
 
 1. `run_simple_world_3d.py`. Shows a very simple example of a small 3D world with multiple goals.
-2. `run_maze_2d.py` - Demonstrates that 2D A* path planning is a subset of the Multi-Goal Planner. It loads a 2D image of a maze as a single slice in a 3D world and has only 1 goal. 
-3. `run_scenarios.py` - Shows how to use the GeoPlanner and planning in a 3D world.
+2. `run_maze_2d.py` - Demonstrates that 2D A-star path planning is a subset of the Multi-Goal Planner. It loads a 2D image of a maze as a single slice in a 3D world and has only 1 goal. 
+3. `run_scenarios.py` - Shows how to use the GeoPlanner and plan in a 3D world.
 
 ## Notes
 
