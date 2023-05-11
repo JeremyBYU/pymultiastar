@@ -1,13 +1,10 @@
 from dataclasses import dataclass, asdict, fields
-from typing import Dict, List, Tuple, TypedDict, Optional, Union
+from typing import Dict, List, Tuple, TypedDict, Optional
 import numpy as np
-from ..types import ArrayFloatMxNxK, Cell, CellPath
+from ..types import ArrayFloatMxNxK, Coord, CoordRisk, CellPath
 
 
-Number = Union[float, int]
-Coord = Tuple[Number, Number, Number]
 CoordPath = List[Coord]
-CoordRisk = Tuple[Coord, float]
 
 class SuperDataClass():
     def to_dict(self) -> Dict:

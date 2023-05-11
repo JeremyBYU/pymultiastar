@@ -1,26 +1,37 @@
+from typing import List
 import numpy as np
 import pymultiastar as pmstar
+import open3d as o3d
 from pymultiastar.visualization.vis3d_helpers import (
     create_map,
     create_pcd_map,
     create_planning_objects,
     visualize_world,
+    plot_pareto
 )
+from pymultiastar.types import Cell, CoordRisk
 
-
-def main():
+def run_vis():
+        #    y,  x,  z
     shape = (20, 30, 15)
     buildings = [
         # Specify bounds of a rectangle (integers only!)
-        # xmin,xmax  ymin,ymax zmin,zmax value
+        # ymin,ymax xmin,xmax zmin,zmax value
         [(7, 12), (7, 12), (0, 12), 1.0]
     ]
     map_3d = create_map(shape=shape, buildings=buildings)
 
-    # specify the starting cell
-    start_cell = (0, 0, 1)
+    # specify the starting cell, all coordinates in y,x,z
+    start_cell: Cell = (0, 0, 1)
     # specify goal cells and the associated risk values (lower is better, 0-1.0)
-    goal_cells = [((15, 9, 3), 0.7), ((5, 9, 2), 1.0), ((19, 19, 15), 0.5)]
+    goal_cells: List[CoordRisk[int]] = [
+        ((9, 15, 3), 0.7), # this will be the best!
+        ((9, 5, 2), 1.0),
+        ((19, 19, 14), 0.5),
+        ((10, 19, 10), 0.9),
+        ((19, 1, 14), 0.8),
+        ((5, 29, 14), 0.55),
+    ]
 
     # this is the diagonal from the origin of the map to the top right (opposite corners of a cube)
     # you can choose whatever you want however
@@ -35,12 +46,21 @@ def main():
     )
     planner = pmstar.PyMultiAStar(map_3d, **params)
     path, meta = planner.search_multiple(start_cell, goal_cells)
-    print(f"path: {path}, meta: {meta}")
+    print(f"Found: {meta}")
 
     world_geoms = create_pcd_map(map_3d, ds_voxel_size=1.0)
-    landing_objects = create_planning_objects(start_cell, goal_cells, path)
+    landing_objects, all_labels = create_planning_objects(start_cell, goal_cells, path)
+
     all_geoms = [*world_geoms, *landing_objects]
-    visualize_world(all_geoms, point_size=20)
+
+    # Calculator the pareto points for all goals. This is only for visualization
+    plot_pareto(planner, start_cell, goal_cells, params)
+    visualize_world(all_geoms, all_labels=all_labels, point_size=20)
+
+
+
+def main():
+    run_vis()
 
 
 if __name__ == "__main__":

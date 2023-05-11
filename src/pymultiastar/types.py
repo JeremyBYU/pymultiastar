@@ -1,11 +1,17 @@
 from typing import List, Annotated, Literal, Tuple, TypedDict
 import numpy.typing as npt
 import numpy as np
-import logging
 from enum import Enum
 
+from typing import TypeVar
+
+T = TypeVar("T", float, int)
+
 ArrayFloatMxNxK = Annotated[npt.NDArray[np.float32], Literal["M", "N", "K"]]
-Cell = Tuple[int, int, int]
+Coord = Tuple[T, T, T]
+Cell = Coord[int]
+CoordRisk = Tuple[Coord[T], float]
+CoordPath = List[Cell]
 CellPath = List[Cell]
 
 class MultiPlannerResult(TypedDict):

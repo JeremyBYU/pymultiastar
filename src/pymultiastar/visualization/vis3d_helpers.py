@@ -1,9 +1,12 @@
+from typing import Tuple
 import open3d as o3d
 import matplotlib as mpl
 import numpy as np
 from ..geoplanner.types import GPS, LandingSite, Coord, GeoMultiPlannerResult, CoordPath, CoordRisk
 from ..geoplanner import GeoPlanner
 from ..geoplanner.helper import convert_cost_map_to_float
+from ..types import Cell
+from .. import calculate_pareto_points
 from typing import List
 from .log import logger
 
@@ -89,12 +92,27 @@ def create_pcd_map(map, obstacle_value=1.0, ds_voxel_size=4.0, **kwargs):
 
     return geoms
 
+def swap_xy_list(coord):
+    result:List[Coord] = []
+    for i in coord:
+        result.append((i[1], i[0], i[2])) 
+    return result
+
+
+def swap_xy(coord: Coord | CoordPath):
+    return (coord[1], coord[0], coord[2])
+
+
 def create_planning_objects(
     start: Coord,
     goals: List[CoordRisk],
     path: CoordPath,
-    radius:float=0.5
+    radius:float=0.5,
+    flip_xy=True
 ):
+    start = swap_xy(start) if flip_xy else start
+    goals = [(swap_xy(goal[0]), goal[1]) if flip_xy else goal for goal in goals]
+    path = swap_xy_list(path) if flip_xy else path
     start_object = dict(
         name="Start Position",
         geometry=create_object(start, color=[0.0, 0.0, 1.0], radius=radius),
@@ -110,7 +128,9 @@ def create_planning_objects(
     path_line_set = create_line(path)
     path_line_set = dict(name="Optimal Path", geometry=path_line_set)
 
-    return [start_object, goal_group, path_line_set]
+    all_labels = [(goal[0], str(goal[1])) for goal in goals]
+
+    return [start_object, goal_group, path_line_set], all_labels
 
 
 def create_landing_objects(
@@ -171,13 +191,16 @@ def create_line(points, color=[0, 1, 0]):
     line_set.paint_uniform_color(color)
     return line_set
 
-def visualize_world(all_geoms, look_at=None, eye=None, point_size=7):
+def visualize_world(all_geoms, all_labels:List[Tuple[Coord, str]]=[], look_at=None, eye=None, point_size=7):
 
     def init(vis):
         vis.show_ground = True
         vis.ground_plane = o3d.visualization.rendering.Scene.GroundPlane.XY  # type: ignore
         vis.point_size = point_size
         vis.show_axes = True
+
+        for label in all_labels:
+            vis.add_3d_label(label[0], label[1])
 
     if eye is None or look_at is None:
         boundary = all_geoms[0]['geometry'].get_axis_aligned_bounding_box()
@@ -210,19 +233,42 @@ def visualize_plan(planner_data, plan_result, xres=2.0):
     all_geoms = [*world_geoms, *landing_objects,]
     visualize_world(all_geoms)
 
-    # def init(vis):
-    #     vis.show_ground = True
-    #     vis.ground_plane = o3d.visualization.rendering.Scene.GroundPlane.XY  # type: ignore
-    #     vis.point_size = 7
-    #     vis.show_axes = True
+def is_pareto_efficient(costs):
+    """
+    :param costs: An (n_points, n_costs) array
+    :return: A (n_points, ) boolean array, indicating whether each point is Pareto efficient
+    """
+    is_efficient = np.ones(costs.shape[0], dtype=bool)
+    for i, c in enumerate(costs):
+        if is_efficient[i]:
+            is_efficient[is_efficient] = np.any(
+                costs[is_efficient] <= c, axis=1)  # Remove dominated points
+    return is_efficient
 
-    # logger.info("Please exit by closing the 3D Visualization Window!")
-    # o3d.visualization.draw(  # type: ignore
-    #     [*world_geoms, *landing_objects],
-    #     lookat=[375, 375, 0],
-    #     eye=[375, -100, 100],
-    #     up=[0, 0, 1],
-    #     title="World Viewer",
-    #     on_init=init,
-    #     show_ui=True,
-    # )
+
+def plot_pareto(planner, start_cell, goal_cells, planning_parameters, **kwargs):
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    pareto_points = calculate_pareto_points(planner, start_cell, goal_cells, **planning_parameters)
+    df = pd.DataFrame.from_records(pareto_points)
+    plot_pareto_(df, **kwargs)
+    plt.show()
+
+def plot_pareto_(df, x='goal_risk', y='path_risk', goal_name="Goal", total_risk='total_risk', fname=None):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    import pandas as pd
+#     df_p = df_p[df_p['path_risk'] < 1.0]
+    costs = df[[x,y]].values
+    pareto_df = pd.DataFrame(costs[is_pareto_efficient(costs)], columns=[x, y]).sort_values(by=[x])
+    ax = sns.scatterplot(data=df, x=x, y=y, color="m")
+    # ax.scatter(df_[0:4]['total_cost'], df_[0:4]['path_cost'], color='r', label='Chosen Landing Sites')
+    ax.plot(pareto_df[x], pareto_df[y], color='g', label='Pareto Frontier')
+    top_item = df.iloc[df[total_risk].idxmin()]
+    ax.scatter(top_item[x], top_item[y], color='r', label=f'Top {goal_name}', zorder=10)
+    sns.set(font_scale=1.3)  # crazy big
+    ax.set_xlabel(f"{goal_name} ($r_l$)")
+    ax.set_ylabel("Path Risk ($r_p$)")
+    if fname:
+        plt.savefig(fname, bbox_inches='tight')
+    return ax

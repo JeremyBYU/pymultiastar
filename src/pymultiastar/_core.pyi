@@ -42,3 +42,7 @@ class PyMultiAStar(object):
     def search_multiple(
         self, start_cell: Cell, goal_cells: List[Tuple[Cell, float]]
     ) -> Tuple[CellPath, MultiPlannerResult]: ...
+
+    def search_single(
+        self, start_cell: Cell, goal_cells: Cell
+    ) -> Tuple[CellPath, float]: ...
