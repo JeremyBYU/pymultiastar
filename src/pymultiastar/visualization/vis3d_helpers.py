@@ -1,7 +1,7 @@
 import open3d as o3d
 import matplotlib as mpl
 import numpy as np
-from ..geoplanner.types import GPS, LandingSite, Coord, GeoMultiPlannerResult
+from ..geoplanner.types import GPS, LandingSite, Coord, GeoMultiPlannerResult, CoordPath, CoordRisk
 from ..geoplanner import GeoPlanner
 from ..geoplanner.helper import convert_cost_map_to_float
 from typing import List
@@ -89,6 +89,29 @@ def create_pcd_map(map, obstacle_value=1.0, ds_voxel_size=4.0, **kwargs):
 
     return geoms
 
+def create_planning_objects(
+    start: Coord,
+    goals: List[CoordRisk],
+    path: CoordPath,
+    radius:float=0.5
+):
+    start_object = dict(
+        name="Start Position",
+        geometry=create_object(start, color=[0.0, 0.0, 1.0], radius=radius),
+    )
+
+    goal_objects = list(map(lambda x: create_object(x[0], radius=radius, color=x[1]), goals))
+    # logger.debug(f"Projected LS Coords {ls_coords}")
+    goal_group = o3d.geometry.TriangleMesh()
+    for ob in goal_objects:
+        goal_group += ob
+    goal_group = dict(name="Landing Sites", geometry=goal_group)
+
+    path_line_set = create_line(path)
+    path_line_set = dict(name="Optimal Path", geometry=path_line_set)
+
+    return [start_object, goal_group, path_line_set]
+
 
 def create_landing_objects(
     start_gps: GPS,
@@ -122,10 +145,13 @@ def create_landing_objects(
     return [start_object, ls_group, path_line_set]
 
 
-def create_object(object: Coord, object_type="ico", color=[1.0, 0.0, 0.0], radius=3.0):
+def create_object(object: Coord, object_type="ico", color=[1.0, 0.0, 0.0], radius=3.0, cmap='magma'):
     object_3d = None
     if object_type == "ico":
         object_3d = o3d.geometry.TriangleMesh.create_icosahedron(radius=radius)
+
+    if not isinstance(color, list):
+        color = mpl.colormaps.get_cmap(cmap)(color)[:3]
 
     object_3d.translate(list(object))
     object_3d.paint_uniform_color(color)
