@@ -25,9 +25,10 @@ def run_vis():
     start_cell: Cell = (0, 0, 1)
     # specify goal cells and the associated risk values (lower is better, 0-1.0)
     goal_cells: List[CoordRisk[int]] = [
-        ((9, 15, 3), 0.7), # this will be the best!
+        ((9, 15, 3), 0.4), # this will be the best!
         ((9, 5, 2), 1.0),
         ((19, 19, 14), 0.5),
+        ((19, 29, 14), 0.1),
         ((10, 19, 10), 0.9),
         ((19, 1, 14), 0.8),
         ((5, 29, 14), 0.55),
@@ -54,9 +55,10 @@ def run_vis():
     all_geoms = [*world_geoms, *landing_objects]
 
     # Calculator the pareto points for all goals. This is only for visualization
-    plot_pareto(planner, start_cell, goal_cells, params)
-    visualize_world(all_geoms, all_labels=all_labels, point_size=20)
-
+    # You can call this by using the Actions dropdown
+    actions = [("Show Pareto Plot", lambda x: plot_pareto(planner, start_cell, goal_cells, params))]
+    # gives 3d visualization
+    visualize_world(all_geoms, all_labels=all_labels, point_size=20, actions=actions)
 
 
 def main():

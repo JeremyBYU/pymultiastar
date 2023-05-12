@@ -14,13 +14,22 @@ def calculate_pareto_points(
 ):
     pareto_points = []
     for i, goal in enumerate(goal_cells):
-        path, path_cost = planner.search_single(start_cell, goal[0])
+        if isinstance(goal, tuple):
+            # Tuple of cell index and risk value
+            path, path_cost = planner.search_single(start_cell, goal[0])
+            goal_risk = goal[1]
+        else:
+            # LandingSite Class
+            result = planner.search_single(start_cell, goal)
+            if result is None:
+                continue
+            path, path_cost = result
+            goal_risk = goal.landing_site_risk
         path_risk = path_cost / normalizing_path_cost
-        goal_risk = goal[1]
         total_risk = goal_weight * goal_risk + path_weight * path_risk
         result = dict(
             goal_idx=i,
-            goal_cell=goal[0],
+            goal=goal,
             path=path,
             path_cost=path_cost,
             path_risk=path_risk,

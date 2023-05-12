@@ -3,7 +3,7 @@ import typer
 import json
 import uuid
 import logging
-from pymultiastar.visualization.vis3d_helpers import visualize_plan
+from pymultiastar.visualization.vis3d_helpers import visualize_plan, plot_pareto
 from pymultiastar.geoplanner.helper import EnhancedJSONEncoder
 from rich.prompt import Prompt
 
@@ -23,6 +23,7 @@ THIS_DIR = Path(__file__).parent
 WORLD_DIR = Path(__file__).parent.parent / "tests" / "fixtures" / "world"
 ANNARBOR_PLAN = WORLD_DIR / "annarbor/plan.json"
 OUTPUT_DIR = THIS_DIR.parent / "output"
+
 
 def plan_scenario(scenario: Scenario, geo_planner: GeoPlanner):
     start_pos = GPS(*scenario["position"])
@@ -50,12 +51,25 @@ def plan_scenario(scenario: Scenario, geo_planner: GeoPlanner):
     result = geo_planner.plan_multi_goal(start_pos, ls_list)
     logger.debug("Plan Result: %s", result)
 
-    return dict(
-        start_gps=start_pos,
-        ls_list=ls_list,
-        geo_planner=geo_planner,
-        plan_results=result,
+    actions = [
+        (
+            "Show Pareto Plot",
+            lambda x: plot_pareto(
+                geo_planner, start_pos, ls_list, geo_planner.planner_kwargs.to_dict()
+            ),
+        )
+    ]
+
+    return (
+        dict(
+            start_gps=start_pos,
+            ls_list=ls_list,
+            geo_planner=geo_planner,
+            plan_results=result,
+        ),
+        actions,
     )
+
 
 @app.command()
 def run_city_plan(
@@ -64,9 +78,9 @@ def run_city_plan(
         LogLevel.INFO.value,
         help="Specify log level",
     ),
-    run_all_scenarios:bool = False,
-    visualize:bool = False,
-    output_dir:Path = OUTPUT_DIR
+    run_all_scenarios: bool = False,
+    visualize: bool = False,
+    output_dir: Path = OUTPUT_DIR,
 ):
     # set log level
     logger.setLevel(getattr(logging, log_level.value))
@@ -90,18 +104,18 @@ def run_city_plan(
         chosen_scenarios.append(scenario)
 
     for scenario in chosen_scenarios:
-        scenario_result = plan_scenario(scenario, geo_planner)
-        scenario_results.append(scenario_result['plan_results'])
+        scenario_result, actions = plan_scenario(scenario, geo_planner)
+        scenario_results.append(scenario_result["plan_results"])
         if visualize:
-            visualize_plan(planner_data, scenario_result, xres=voxel_meta["xres"])
+            visualize_plan(
+                planner_data, scenario_result, xres=voxel_meta["xres"], actions=actions
+            )
 
-    file_name = planner_data.get('name', str(uuid.uuid4())) + ".json"
+    file_name = planner_data.get("name", str(uuid.uuid4())) + ".json"
     output_fp = output_dir / file_name
     logger.info("Writing file to %s", output_fp)
-    with open(output_fp, 'w') as fh:
+    with open(output_fp, "w") as fh:
         json.dump(scenario_results, fh, cls=EnhancedJSONEncoder, indent=2)
-
-
 
 
 if __name__ == "__main__":

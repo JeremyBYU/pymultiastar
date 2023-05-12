@@ -128,7 +128,7 @@ def create_planning_objects(
     path_line_set = create_line(path)
     path_line_set = dict(name="Optimal Path", geometry=path_line_set)
 
-    all_labels = [(goal[0], str(goal[1])) for goal in goals]
+    all_labels = [(goal[0], f"{goal[1]:.2f}") for goal in goals]
 
     return [start_object, goal_group, path_line_set], all_labels
 
@@ -162,10 +162,12 @@ def create_landing_objects(
     path_line_set = create_line(plan_results["path_projected_zero_origin"])
     path_line_set = dict(name="Optimal Path", geometry=path_line_set)
 
-    return [start_object, ls_group, path_line_set]
+    all_labels = [(goal[0], str(goal[1])) for goal in zip(ls_coords, ls_list)]
+
+    return [start_object, ls_group, path_line_set], all_labels
 
 
-def create_object(object: Coord, object_type="ico", color=[1.0, 0.0, 0.0], radius=3.0, cmap='magma'):
+def create_object(object: Coord, object_type="ico", color=[1.0, 0.0, 0.0], radius=3.0, cmap='viridis'):
     object_3d = None
     if object_type == "ico":
         object_3d = o3d.geometry.TriangleMesh.create_icosahedron(radius=radius)
@@ -191,7 +193,8 @@ def create_line(points, color=[0, 1, 0]):
     line_set.paint_uniform_color(color)
     return line_set
 
-def visualize_world(all_geoms, all_labels:List[Tuple[Coord, str]]=[], look_at=None, eye=None, point_size=7):
+def visualize_world(all_geoms, all_labels:List[Tuple[Coord, str]]=[], look_at=None, 
+                    eye=None, point_size=7, actions=[]):
 
     def init(vis):
         vis.show_ground = True
@@ -217,12 +220,13 @@ def visualize_world(all_geoms, all_labels:List[Tuple[Coord, str]]=[], look_at=No
         title="World Viewer",
         on_init=init,
         show_ui=True,
+        actions=actions
     )
 
-def visualize_plan(planner_data, plan_result, xres=2.0):
+def visualize_plan(planner_data, plan_result, xres=2.0, actions=[]):
     logger.info("Loading Map for Visualization ...")
 
-    landing_objects = create_landing_objects(**plan_result)  # type: ignore
+    landing_objects, all_labels = create_landing_objects(**plan_result)  # type: ignore
     map_3d = np.load(planner_data["cost_map_fp"])
     map_3d = convert_cost_map_to_float(
         map_3d, reverse_yaxis=True, set_max_value_to_inf=False
@@ -231,7 +235,7 @@ def visualize_plan(planner_data, plan_result, xres=2.0):
     logger.info("Finished Loaded Map!")
 
     all_geoms = [*world_geoms, *landing_objects,]
-    visualize_world(all_geoms)
+    visualize_world(all_geoms, all_labels=all_labels, actions=actions)
 
 def is_pareto_efficient(costs):
     """
@@ -269,6 +273,7 @@ def plot_pareto_(df, x='goal_risk', y='path_risk', goal_name="Goal", total_risk=
     sns.set(font_scale=1.3)  # crazy big
     ax.set_xlabel(f"{goal_name} ($r_l$)")
     ax.set_ylabel("Path Risk ($r_p$)")
+    ax.axis('equal')
     if fname:
         plt.savefig(fname, bbox_inches='tight')
     return ax

@@ -7,7 +7,7 @@ import json
 import numpy as np
 from pyproj import Transformer
 
-from ..types import ArrayFloatMxNxK
+from ..types import ArrayFloatMxNxK, CellPath
 from .types import (PlannerKwargs, VoxelMeta, GPS, LandingSite, GeoMultiPlannerResult, Coord)
 from .helper import (
     convert_cost_map_to_float,
@@ -194,7 +194,14 @@ class GeoPlanner(object):
         z_meters = coord[2] - self.voxel_meta['zmin']
         
         return (x_meters, y_meters, z_meters)
-
+    
+    def search_single(self, start_position: GPS, ls:LandingSite) -> Optional[Tuple[CellPath, float]]:
+        result = self.plan_multi_goal(start_position, [ls])
+        if result is None:
+            return None
+        path_cost = result["goal_path_cost"]
+        path = result["path_cells"]
+        return (path, path_cost)
 
 
 def create_planner_from_configuration(plan: Path):

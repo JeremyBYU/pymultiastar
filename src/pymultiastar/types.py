@@ -11,7 +11,7 @@ ArrayFloatMxNxK = Annotated[npt.NDArray[np.float32], Literal["M", "N", "K"]]
 Coord = Tuple[T, T, T]
 Cell = Coord[int]
 CoordRisk = Tuple[Coord[T], float]
-CoordPath = List[Cell]
+CoordPath = List[Coord]
 CellPath = List[Cell]
 
 class MultiPlannerResult(TypedDict):

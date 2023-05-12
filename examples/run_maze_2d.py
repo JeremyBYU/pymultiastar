@@ -34,6 +34,7 @@ def run_maze(img_path: Path, maze_start=None, maze_end=None):
         normalizing_path_cost=maze_data["normalizing_path_cost"],
         goal_weight=0.5,
         path_weight=0.5,
+        allow_diag=False
     )
 
     planner = pmstar.PyMultiAStar(maze_data["map"], **params)
