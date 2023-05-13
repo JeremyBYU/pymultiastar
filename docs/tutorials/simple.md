@@ -8,6 +8,7 @@ The MultiGoal Planner has several parameters that determine its goal and path fi
 ::: pymultiastar._core.PyMultiAStar
     handler: python
     options:
+      show_bases: false
       members:
         - __init__.py
 

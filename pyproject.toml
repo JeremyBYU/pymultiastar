@@ -26,14 +26,14 @@ build-backend = "scikit_build_core.build"
 geo = ["pyproj>=3.0"]
 test = ["pytest", "Pillow", "pyproj>=3.0"]
 docs = ["mkdocstrings[python]", "mkdocs-autorefs>=0.3.1",
-      "pymdown-extensions>=6.3", "mkdocs>=1.3",
+      "pymdown-extensions>=6.3", "mkdocs>=1.3", "griffe>=0.27.5", "python-markdown-math",
       "mkdocs-coverage>=0.2", "mkdocs-gen-files>=0.3",
       "mkdocs-literate-nav>=0.4","mkdocs-material>=7.3",
       "mkdocs-section-index>=0.3", "mkdocstrings-python>=0.5.1",
       "markdown-callouts>=0.2","markdown-exec>=0.5"]
 
 dev = ["black", "open3d>=0.17", "matplotlib", 
-      "rich", "typer", "ipdb", "Pillow", 
+      "rich", "typer", "ipdb", "Pillow", "pandas", "seaborn",
       "pymultiastar[geo,test]"]
 
 

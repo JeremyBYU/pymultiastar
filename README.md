@@ -8,9 +8,9 @@ The map provided should be a 3D voxel grid(i, j, k), a 3D NumPy array, which the
 
 **What do you mean by multiple goals with heterogenous values?**
 
-A normal A-star planner has a start location and one goal. This Multi-Goal planner allows you to provide multiple goal cells each having different values. Goals with lower values are more desirable. This planner will try to find the optimal **goal** *and* **path** which minimizes an objective function. It must be understood that the planner doesn't just find a path. It finds the goal and the corresponding optimal path that minimizes some larger objective function. 
+A normal A-star planner has a start location and one goal. This Multi-Goal planner allows you to provide multiple goal cells each having different values. Goals with lower values are more desirable. This planner will try to find the optimal **goal** *and* **path** which minimizes an objective function. It must be understood that the planner doesn't just find a path. It finds the *one* goal and the corresponding optimal path that minimizes some larger objective function. 
 
-**What is the objective function?**
+**What is the larger objective function?**
 
 The objective function is the minimization of total risk ($r_t$), which is the combination of path risk ($r_p$) and goal risk $r_g$. In my research the goals were landing sites, therefore I called the latter landing site risk $r_l$. 
 Below is an excerpt from my paper that discusses this trade-off between objectives:
@@ -30,13 +30,27 @@ $$
 
 ![Tradeoff](https://raw.githubusercontent.com/JeremyBYU/pymultiastar/master/assets/imgs/tradeoff.png)
 
-**What precisely are these two objectives and how do they relate to the planner?**
+Given the weighting between the two objectives, **one** of the purple dots on the green line is considered the "best" goal/path pair and will have minimum total risk. Here's the kicker though: you do **not** know the path risk *until* you do path planning. However, path planning is very expensive. PyMultiAStar will search for the optimal goal/path such that we minimize our expensive path planning procedures, often only needing to perform path planning 1-3 times on average.
+
+**How do you minimize path planning? How do you know when to stop searching?**
+
+We first sort the goals by their *minimum* total risk $r_{t,min}$ where
+
+$$r_{t,min} = w_{g} \cdot r_{g} + w_p \cdot  h(\mathbf{start}, \mathbf{goal}) / R$$
+
+where $h$ is an admissible heuristic and $R$ is a normalizing constant. Basically, we are bounding the minimum path distance which in turn bounds total risk. $R$ is usually the largest distance permissible during path planning. This entire list is very cheap to compute and sort.
+
+The first goal in this sorted list is the most *likely* to be the lowest total risk, but we don't know until we do path planning. After path planning to this goal, we can determine the **true** path risk and calculate the total risk. If the goal's total risk is less than the *next* goal's **minimum** total risk, we can guarantee we found the optimal solution to our objective function. We can stop searching! 
+
+**What precisely are these objectives and where are the details of the planner?**
 
 See the following sections in the paper linked above: 
 
-- Definition of Path **Cost**: Section 1.3.2, Equations 1.6-1.8
-- Definition of Path **Risk**: Section 1.5, Equation 1.17
-- Definition of Landing Site (Goal) **Risk**: Section 1.4.4, Equation 1.9
+- Definition of **Path Cost**: Section 1.3.2, Equations 1.6-1.8
+- Definition of **Path Risk**: Section 1.5, Equation 1.17
+- Definition of **Landing Site (Goal) Risk**: Section 1.4.4, Equation 1.9. This can be defined as anything for your specific problem.
+- Definition of **Total Risk**: Section 1.6.2, Equation 1.18. 
+- Proof of Planner: Section 1.6.3
 
 
 ## Install
@@ -56,7 +70,3 @@ Below are some examples:
 1. `run_simple_world_3d.py`. Shows a very simple example of a small 3D world with multiple goals.
 2. `run_maze_2d.py` - Demonstrates that 2D A-star path planning is a subset of the Multi-Goal Planner. It loads a 2D image of a maze as a single slice in a 3D world and has only 1 goal. 
 3. `run_scenarios.py` - Shows how to use the GeoPlanner and plan in a 3D world.
-
-## Notes
-
-inside pymultiastar map data - (i,j,k) is the row, column, depth

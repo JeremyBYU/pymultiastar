@@ -265,15 +265,16 @@ def plot_pareto_(df, x='goal_risk', y='path_risk', goal_name="Goal", total_risk=
 #     df_p = df_p[df_p['path_risk'] < 1.0]
     costs = df[[x,y]].values
     pareto_df = pd.DataFrame(costs[is_pareto_efficient(costs)], columns=[x, y]).sort_values(by=[x])
-    ax = sns.scatterplot(data=df, x=x, y=y, color="m")
     # ax.scatter(df_[0:4]['total_cost'], df_[0:4]['path_cost'], color='r', label='Chosen Landing Sites')
-    ax.plot(pareto_df[x], pareto_df[y], color='g', label='Pareto Frontier')
+    ax = sns.scatterplot(data=df, x=x, y=y, color="m", label="All Goals", zorder=5)
+    ax.plot(pareto_df[x], pareto_df[y], color='g', label='Pareto Frontier', zorder=1)
     top_item = df.iloc[df[total_risk].idxmin()]
-    ax.scatter(top_item[x], top_item[y], color='r', label=f'Top {goal_name}', zorder=10)
+    ax.scatter(top_item[x], top_item[y], color='r', label=f'Best {goal_name}', zorder=10)
     sns.set(font_scale=1.3)  # crazy big
-    ax.set_xlabel(f"{goal_name} ($r_l$)")
+    ax.set_xlabel(f"{goal_name} Risk ($r_{goal_name[0].lower()}$)")
     ax.set_ylabel("Path Risk ($r_p$)")
     ax.axis('equal')
+    plt.legend(loc='upper right')
     if fname:
         plt.savefig(fname, bbox_inches='tight')
     return ax

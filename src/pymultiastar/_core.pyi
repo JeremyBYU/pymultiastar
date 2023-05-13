@@ -5,9 +5,10 @@ __version__: str
 
 class PyMultiAStar(object):
     """
-    A planner that will search for **multiple** goals with **heterogenous** values 
+    A planner that will search for **multiple** goals with **heterogenous** values
     using a 3D A-star **discrete** planner.
     """
+
     def __init__(
         self,
         map: ArrayFloatMxNxK,
@@ -23,7 +24,7 @@ class PyMultiAStar(object):
         """Creates the multi-goal planner.
 
         Args:
-            map (ArrayFloatMxNxK): 3D NumPy array, often called the voxel grid. 
+            map (ArrayFloatMxNxK): 3D NumPy array, often called the voxel grid.
                                    index (i,j,k) corresponds to (y, x, z)
             allow_diag (bool, optional): Allows diagonal travel in map. Defaults to False.
             map_res (float, optional): The length (m) of an edge in the voxel grid. Defaults to 2.0.
@@ -41,8 +42,29 @@ class PyMultiAStar(object):
         """
     def search_multiple(
         self, start_cell: Cell, goal_cells: List[Tuple[Cell, float]]
-    ) -> Tuple[CellPath, MultiPlannerResult]: ...
+    ) -> Tuple[CellPath, MultiPlannerResult]:
+        """Will search though the map finding the optimal goal/path pair.
+
+        Args:
+            start_cell (Cell): The start voxel cell in the map
+            goal_cells (List[Tuple[Cell, float]]): A list of goal cells and their 
+                                                   corresponding goal risk
+
+        Returns:
+            Tuple[CellPath, MultiPlannerResult]: The cell path and full planner results
+        """
+        ...
 
     def search_single(
         self, start_cell: Cell, goal_cells: Cell
-    ) -> Tuple[CellPath, float]: ...
+    ) -> Tuple[CellPath, float]:
+        """Single A* search
+
+        Args:
+            start_cell (Cell): Start Cell
+            goal_cells (Cell): End Cell
+
+        Returns:
+            Tuple[CellPath, float]: Path and Path Cost
+        """
+        ...

@@ -4,7 +4,15 @@ from PIL import Image, ImageDraw
 import shutil
 from .log import logger
 
-def get_maze(img_path: Path, offset=3):
+
+from typing import TypedDict
+
+class MazeReturn(TypedDict):
+    img: np.ndarray
+    map: np.ndarray
+    normalizing_path_cost: float
+
+def get_maze(img_path: Path, offset=3) -> MazeReturn:
     """This will load an image of maze into a 3D numpy array
 
     Args:
@@ -12,17 +20,16 @@ def get_maze(img_path: Path, offset=3):
         offset (int, optional): Where to offset to start and finish. Defaults to 3.
 
     Returns:
-        dict: Returns a dictionary of maze data
+        MazeReturn: Returns a dictionary of maze data
     """
-    img = np.asarray(Image.open(img_path))
+    img:np.ndarray = np.asarray(Image.open(img_path))
     logger.debug(f"Maze name: {img_path.name}, Shape: {img.shape}")
     logger.debug(f"Unique values: {np.unique(img)}")
     # convert to float and an empty third dimension
-    img_f = np.expand_dims((img / np.max(img)).astype(np.float32), axis=2)
+    img_f:np.ndarray = np.expand_dims((img / np.max(img)).astype(np.float32), axis=2)
     # Best case scenario is a diagonal path, lets guess it will be 50% bigger
-    normalizing_path_cost = 1.5 * np.sqrt(img.shape[0] ** 2 + img.shape[1] ** 2)
-
-    return dict(
+    normalizing_path_cost:float = 1.5 * np.sqrt(img.shape[0] ** 2 + img.shape[1] ** 2)
+    return MazeReturn(
         img=img,
         map=img_f,
         normalizing_path_cost=normalizing_path_cost,

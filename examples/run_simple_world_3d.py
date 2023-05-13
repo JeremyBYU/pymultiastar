@@ -25,10 +25,10 @@ def run_vis():
     start_cell: Cell = (0, 0, 1)
     # specify goal cells and the associated risk values (lower is better, 0-1.0)
     goal_cells: List[CoordRisk[int]] = [
-        ((9, 15, 3), 0.4), # this will be the best!
-        ((9, 5, 2), 1.0),
-        ((19, 19, 14), 0.5),
-        ((19, 29, 14), 0.1),
+        ((9, 5, 2), 1.0), # it's close, but has high risk
+        ((19, 29, 14), 0.1), # it's far, but has low risk
+        ((9, 15, 3), 0.4), # its kinds close and is kinda low risk! This will be the best!
+        ((19, 19, 14), 0.5), # all the rest are not that good!
         ((10, 19, 10), 0.9),
         ((19, 1, 14), 0.8),
         ((5, 29, 14), 0.55),

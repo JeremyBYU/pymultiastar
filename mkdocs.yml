@@ -1,6 +1,6 @@
 site_name: "PyMultiAStar"
 site_description: "Multi-Goal A* with Heterogenous Values"
-site_url: "https://JeremyBYU.github.io/pymultiastar-cpp"
+site_url: "https://JeremyBYU.github.io/pymultiastar"
 repo_url: "https://github.com/JeremyBYU/pymultiastar"
 edit_uri: "blob/master/docs/"
 repo_name: "JeremyBYU/pymultiastar"
@@ -41,6 +41,10 @@ theme:
       icon: material/weather-night
       name: Switch to light mode
 
+extra_javascript: 
+    - js/mathjaxhelper.js
+    - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
 extra_css:
 - css/style.css
 - css/material.css
@@ -60,6 +64,8 @@ markdown_extensions:
 - pymdownx.tasklist
 - toc:
     permalink: "¤"
+# - mdx_math:
+#     enable_dollar_delimiter: True
 
 plugins:
 - search
