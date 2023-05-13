@@ -102,6 +102,8 @@ def run_city_plan(
         )
         scenario = next(item for item in scenarios if item["name"] == scenario_str)
         chosen_scenarios.append(scenario)
+    else:
+        chosen_scenarios = scenarios
 
     for scenario in chosen_scenarios:
         scenario_result, actions = plan_scenario(scenario, geo_planner)
