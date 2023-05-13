@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://JeremyBYU.github.io/pymultiastar-cpp/reference/geoplanner/helper/">
+        <link rel="canonical" href="https://JeremyBYU.github.io/pymultiastar/reference/geoplanner/helper/">
       
       
         <link rel="prev" href="../geoplanner/">
       
       
-        <link rel="next" href="../log/">
+        <link rel="next" href="../types/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.8">
@@ -637,20 +637,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../log/" class="md-nav__link">
-        log
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../types/" class="md-nav__link">
         types
       </a>
@@ -721,20 +707,6 @@
     <li class="md-nav__item">
       <a href="../../visualization/img2d_helpers/" class="md-nav__link">
         img2d_helpers
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../visualization/log/" class="md-nav__link">
-        log
       </a>
     </li>
   
@@ -939,7 +911,7 @@ Also the y-axis is growing DOWN, like an image, if this was generated from <a hr
           <td>
                 <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
           </td>
-          <td><p>Three dimenstional cost map</p></td>
+          <td><p>Three dimensional cost map</p></td>
           <td>
               <em>required</em>
           </td>
@@ -988,6 +960,7 @@ Also the y-axis is growing DOWN, like an image, if this was generated from <a hr
     <tbody>
         <tr>
           <td>
+                <code><span title="numpy">np</span>.<span title="numpy.ndarray">ndarray</span></code>
           </td>
           <td><p>np.ndarray: Your 3D cost map in float32</p></td>
         </tr>
@@ -996,8 +969,7 @@ Also the y-axis is growing DOWN, like an image, if this was generated from <a hr
 
       <details class="quote">
         <summary>Source code in <code>C:\Users\Jerem\scoop\apps\mambaforge\current\envs\aclm\lib\site-packages\pymultiastar\geoplanner\helper.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
-<span class="normal">12</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
@@ -1021,7 +993,12 @@ Also the y-axis is growing DOWN, like an image, if this was generated from <a hr
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">convert_cost_map_to_float</span><span class="p">(</span><span class="n">cost_map</span><span class="p">,</span> <span class="n">reverse_yaxis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_max_value_to_inf</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">convert_cost_map_to_float</span><span class="p">(</span>
+    <span class="n">cost_map</span><span class="p">,</span> <span class="n">reverse_yaxis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_max_value_to_inf</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Will convert a uint8 cost map to a float32</span>
 
 
@@ -1030,7 +1007,7 @@ Also the y-axis is growing DOWN, like an image, if this was generated from <a hr
 
 
 <span class="sd">    Args:</span>
-<span class="sd">        cost_map (np.ndarray): Three dimenstional cost map</span>
+<span class="sd">        cost_map (np.ndarray): Three dimensional cost map</span>
 <span class="sd">        reverse_yaxis (bool, optional): Will reverse y axes of the map. Defaults to True.</span>
 <span class="sd">        normalize (bool, optional): Will normalize cost from 0 to 1.0. Defaults to True.</span>
 <span class="sd">        set_max_value_to_inf (bool, optional): All max values will be mapped to np.inf. Defaults True.</span>
@@ -1040,10 +1017,10 @@ Also the y-axis is growing DOWN, like an image, if this was generated from <a hr
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cost_map</span> <span class="o">=</span> <span class="n">cost_map</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">reverse_yaxis</span><span class="p">:</span>
-        <span class="n">cost_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">cost_map</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># reverses the y-axis</span>
+        <span class="n">cost_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">cost_map</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># reverses the y-axis</span>
     <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
         <span class="n">max_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cost_map</span><span class="p">)</span>
-        <span class="n">cost_map</span> <span class="o">=</span> <span class="n">cost_map</span> <span class="o">/</span> <span class="n">max_value</span> <span class="c1"># convert to float32</span>
+        <span class="n">cost_map</span> <span class="o">=</span> <span class="n">cost_map</span> <span class="o">/</span> <span class="n">max_value</span>  <span class="c1"># convert to float32</span>
     <span class="k">if</span> <span class="n">set_max_value_to_inf</span><span class="p">:</span>
         <span class="n">cost_map</span><span class="p">[</span><span class="n">cost_map</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
     <span class="k">return</span> <span class="n">cost_map</span>
@@ -1070,19 +1047,31 @@ Data is in x, y, height all in meters</p>
 
       <details class="quote">
         <summary>Source code in <code>C:\Users\Jerem\scoop\apps\mambaforge\current\envs\aclm\lib\site-packages\pymultiastar\geoplanner\helper.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">prepare_planning_args_optimized</span><span class="p">(</span><span class="n">start_position</span><span class="p">:</span><span class="n">GPS</span><span class="p">,</span> <span class="n">ls_list</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="n">LandingSite</span><span class="p">],</span> <span class="n">transformer</span><span class="p">:</span><span class="n">Transformer</span><span class="p">):</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">prepare_planning_args_optimized</span><span class="p">(</span>
+    <span class="n">start_position</span><span class="p">:</span> <span class="n">GPS</span><span class="p">,</span> <span class="n">ls_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LandingSite</span><span class="p">],</span> <span class="n">transformer</span><span class="p">:</span> <span class="n">Transformer</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepares a list of landing sites formatted as a dictionary to be sent to a Path Planner</span>
 <span class="sd">    Data is in x, y, height all in meters&quot;&quot;&quot;</span>
-    <span class="n">projected_position</span><span class="p">:</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="o">*</span><span class="n">start_position</span><span class="o">.</span><span class="n">to_array</span><span class="p">())</span>
-    <span class="n">projected_goal_positions</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="o">*</span><span class="n">ls</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">to_array</span><span class="p">()),</span> <span class="n">ls</span><span class="o">.</span><span class="n">landing_site_risk</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">ls</span> <span class="ow">in</span> <span class="n">ls_list</span><span class="p">]</span>
+    <span class="n">projected_position</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">start_position</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">projected_goal_positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="o">*</span><span class="n">ls</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">to_array</span><span class="p">()),</span> <span class="n">ls</span><span class="o">.</span><span class="n">landing_site_risk</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ls</span> <span class="ow">in</span> <span class="n">ls_list</span>
+    <span class="p">]</span>
 
     <span class="k">return</span> <span class="n">projected_position</span><span class="p">,</span> <span class="n">projected_goal_positions</span>
 </code></pre></div></td></tr></table></div>
@@ -1159,6 +1148,10 @@ Data is in x, y, height all in meters</p>
     
     
       <script src="../../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+        <script src="../../../js/mathjaxhelper.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

@@ -1,83 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/contributing/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/contributing/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/license/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/license/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/types/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/types/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/geoplanner/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/geoplanner/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/geoplanner/geoplanner/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/geoplanner/geoplanner/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/geoplanner/helper/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/geoplanner/helper/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/geoplanner/log/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/geoplanner/types/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/geoplanner/types/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/visualization/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/visualization/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/visualization/img2d_helpers/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/visualization/img2d_helpers/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/reference/visualization/vis3d_helpers/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/visualization/log/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/tutorials/geoplanner/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/reference/visualization/vis3d_helpers/</loc>
-         <lastmod>2023-05-01</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/tutorials/geoplanner/</loc>
-         <lastmod>2023-05-01</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://JeremyBYU.github.io/pymultiastar-cpp/tutorials/simple/</loc>
-         <lastmod>2023-05-01</lastmod>
+         <loc>https://JeremyBYU.github.io/pymultiastar/tutorials/simple/</loc>
+         <lastmod>2023-05-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://JeremyBYU.github.io/pymultiastar-cpp/tutorials/simple/">
+        <link rel="canonical" href="https://JeremyBYU.github.io/pymultiastar/tutorials/simple/">
       
       
         <link rel="prev" href="../../license/">
@@ -434,9 +434,54 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Simple Example
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Simple Example
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pymultiastar" class="md-nav__link">
+    PyMultiAStar
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pymultiastar._core.PyMultiAStar" class="md-nav__link">
+    pymultiastar._core.PyMultiAStar
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explanation" class="md-nav__link">
+    Explanation
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -592,20 +637,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/geoplanner/log/" class="md-nav__link">
-        log
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../reference/geoplanner/types/" class="md-nav__link">
         types
       </a>
@@ -676,20 +707,6 @@
     <li class="md-nav__item">
       <a href="../../reference/visualization/img2d_helpers/" class="md-nav__link">
         img2d_helpers
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/visualization/log/" class="md-nav__link">
-        log
       </a>
     </li>
   
@@ -799,6 +816,35 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pymultiastar" class="md-nav__link">
+    PyMultiAStar
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pymultiastar._core.PyMultiAStar" class="md-nav__link">
+    pymultiastar._core.PyMultiAStar
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explanation" class="md-nav__link">
+    Explanation
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -816,7 +862,153 @@
 
 
 <h1 id="starting-tutorial-first-steps">Starting Tutorial - First Steps<a class="headerlink" href="#starting-tutorial-first-steps" title="Permanent link">¤</a></h1>
-<p>First steps tutorial here.</p>
+<p>The MultiGoal Planner has several parameters that determine its goal and path finding behavior. Lets begin by discussing the parameters passed into PyMultiAStar constructor.</p>
+<h2 id="pymultiastar">PyMultiAStar<a class="headerlink" href="#pymultiastar" title="Permanent link">¤</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+<a id="pymultiastar._core.PyMultiAStar"></a>
+  <div class="doc doc-contents first">
+
+  
+      <p>A planner that will search for <strong>multiple</strong> goals with <strong>heterogenous</strong> values
+using a 3D A-star <strong>discrete</strong> planner.</p>
+
+  
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>map</code></td>
+          <td>
+                <code><span title="pymultiastar.types.ArrayFloatMxNxK">ArrayFloatMxNxK</span></code>
+          </td>
+          <td><p>3D NumPy array, often called the voxel grid.
+                   index (i,j,k) corresponds to (y, x, z)</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>allow_diag</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Allows diagonal travel in map. Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>map_res</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>The length (m) of an edge in the voxel grid. Defaults to 2.0.</p></td>
+          <td>
+                <code>2.0</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>obstacle_value</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>The value of an obstacle in the map. Defaults to 1.0.</p></td>
+          <td>
+                <code>1.0</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>normalizing_path_cost</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>The length and penalities of a path must
+                                    be normalized. This should generally be the
+                                    the longest path acceptable. Defaults to 1.0.</p></td>
+          <td>
+                <code>1.0</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>goal_weight</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>The weighting of the goal risk. Defaults to 0.5.</p></td>
+          <td>
+                <code>0.5</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>path_weight</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>The weighting of the path risk. Defaults to 0.5.</p></td>
+          <td>
+                <code>0.5</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>keep_nodes</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>An optimization parameter which, if set to True,
+                         may result in less dynamic memory allocations if many
+                         goals are being searched for. Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>path_w0</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>The path cost penalty multiplier when encountering
+                        a potential field. Defaults to 1.0.</p></td>
+          <td>
+                <code>1.0</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div><h2 id="explanation">Explanation<a class="headerlink" href="#explanation" title="Permanent link">¤</a></h2>
+<p>PyMultiAStar first requires a  <strong>map</strong>, which is a 3D NumPy array through which it searches through. We call each value in this array a Cell. To start soem</p>
 
 
 
@@ -878,6 +1070,10 @@
     
     
       <script src="../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+        <script src="../../js/mathjaxhelper.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

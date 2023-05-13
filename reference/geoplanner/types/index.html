@@ -10,10 +10,10 @@
       
       
       
-        <link rel="canonical" href="https://JeremyBYU.github.io/pymultiastar-cpp/reference/geoplanner/types/">
+        <link rel="canonical" href="https://JeremyBYU.github.io/pymultiastar/reference/geoplanner/types/">
       
       
-        <link rel="prev" href="../log/">
+        <link rel="prev" href="../helper/">
       
       
         <link rel="next" href="../../types/">
@@ -584,20 +584,6 @@
               
   
   
-  
-    <li class="md-nav__item">
-      <a href="../log/" class="md-nav__link">
-        log
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
     
   
   
@@ -754,20 +740,6 @@
     <li class="md-nav__item">
       <a href="../../visualization/img2d_helpers/" class="md-nav__link">
         img2d_helpers
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../visualization/log/" class="md-nav__link">
-        log
       </a>
     </li>
   
@@ -1024,21 +996,21 @@
 
       <details class="quote">
         <summary>Source code in <code>C:\Users\Jerem\scoop\apps\mambaforge\current\envs\aclm\lib\site-packages\pymultiastar\geoplanner\types.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
-<span class="k">def</span> <span class="nf">from_gps_string</span><span class="p">(</span><span class="n">centroid</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">from_gps_string</span><span class="p">(</span><span class="n">centroid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a lat-long string to a GPS object. Optionally handles height and projection&quot;&quot;&quot;</span>
-    <span class="n">centroid_</span> <span class="o">=</span> <span class="n">centroid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">centroid_</span> <span class="o">=</span> <span class="n">centroid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
     <span class="c1"># reverse lat,lon if necessary</span>
     <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
-        <span class="n">centroid_</span> <span class="o">=</span> <span class="n">centroid_</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
+        <span class="n">centroid_</span> <span class="o">=</span> <span class="n">centroid_</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">gps</span> <span class="o">=</span> <span class="n">GPS</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">centroid_</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">centroid_</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">alt</span><span class="o">=</span><span class="n">alt</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">gps</span>
 </code></pre></div></td></tr></table></div>
@@ -1095,7 +1067,7 @@
 <code class="highlight language-python"><span class="n">centroid</span><span class="p">:</span> <span class="n">GPS</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#pymultiastar.geoplanner.types.LandingSite.centroid" class="headerlink" title="Permanent link">¤</a></h3>
@@ -1116,7 +1088,7 @@
 <code class="highlight language-python"><span class="n">landing_site_risk</span><span class="p">:</span> <span class="nb">float</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#pymultiastar.geoplanner.types.LandingSite.landing_site_risk" class="headerlink" title="Permanent link">¤</a></h3>
@@ -1208,6 +1180,10 @@
     
     
       <script src="../../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+        <script src="../../../js/mathjaxhelper.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

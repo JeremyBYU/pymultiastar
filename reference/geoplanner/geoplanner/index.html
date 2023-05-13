@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://JeremyBYU.github.io/pymultiastar-cpp/reference/geoplanner/geoplanner/">
+        <link rel="canonical" href="https://JeremyBYU.github.io/pymultiastar/reference/geoplanner/geoplanner/">
       
       
         <link rel="prev" href="../">
@@ -671,20 +671,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../log/" class="md-nav__link">
-        log
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../types/" class="md-nav__link">
         types
       </a>
@@ -755,20 +741,6 @@
     <li class="md-nav__item">
       <a href="../../visualization/img2d_helpers/" class="md-nav__link">
         img2d_helpers
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../visualization/log/" class="md-nav__link">
-        log
       </a>
     </li>
   
@@ -1105,11 +1077,10 @@ multi-goal a-star planner. Defaults to PlannerKwargs().</p></td>
 
 
 <h3 id="pymultiastar.geoplanner.geoplanner.GeoPlanner.cost_map" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cost_map</span> <span class="o">=</span> <span class="n">convert_cost_map_to_float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cost_map_fp</span><span class="p">))</span></code>
+<code class="highlight language-python"><span class="n">cost_map</span><span class="p">:</span> <span class="n">ArrayFloatMxNxK</span> <span class="o">=</span> <span class="n">convert_cost_map_to_float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cost_map_fp</span><span class="p">))</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#pymultiastar.geoplanner.geoplanner.GeoPlanner.cost_map" class="headerlink" title="Permanent link">¤</a></h3>
@@ -1127,11 +1098,10 @@ multi-goal a-star planner. Defaults to PlannerKwargs().</p></td>
 
 
 <h3 id="pymultiastar.geoplanner.geoplanner.GeoPlanner.planner" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">planner</span> <span class="o">=</span> <span class="n">pmstar</span><span class="o">.</span><span class="n">PyMultiAStar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost_map</span><span class="p">,</span> <span class="kc">None</span><span class="o">=</span><span class="n">planner_kwargs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span></code>
+<code class="highlight language-python"><span class="n">planner</span><span class="p">:</span> <span class="n">pmstar</span><span class="o">.</span><span class="n">PyMultiAStar</span> <span class="o">=</span> <span class="n">pmstar</span><span class="o">.</span><span class="n">PyMultiAStar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost_map</span><span class="p">,</span> <span class="kc">None</span><span class="o">=</span><span class="n">planner_kwargs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#pymultiastar.geoplanner.geoplanner.GeoPlanner.planner" class="headerlink" title="Permanent link">¤</a></h3>
@@ -1149,11 +1119,10 @@ multi-goal a-star planner. Defaults to PlannerKwargs().</p></td>
 
 
 <h3 id="pymultiastar.geoplanner.geoplanner.GeoPlanner.planner_kwargs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">planner_kwargs</span> <span class="o">=</span> <span class="n">planner_kwargs</span></code>
+<code class="highlight language-python"><span class="n">planner_kwargs</span><span class="p">:</span> <span class="n">PlannerKwargs</span> <span class="o">=</span> <span class="n">planner_kwargs</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#pymultiastar.geoplanner.geoplanner.GeoPlanner.planner_kwargs" class="headerlink" title="Permanent link">¤</a></h3>
@@ -1171,11 +1140,10 @@ multi-goal a-star planner. Defaults to PlannerKwargs().</p></td>
 
 
 <h3 id="pymultiastar.geoplanner.geoplanner.GeoPlanner.voxel_meta" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">voxel_meta</span> <span class="o">=</span> <span class="n">voxel_meta</span></code>
+<code class="highlight language-python"><span class="n">voxel_meta</span><span class="p">:</span> <span class="n">VoxelMeta</span> <span class="o">=</span> <span class="n">voxel_meta</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#pymultiastar.geoplanner.geoplanner.GeoPlanner.voxel_meta" class="headerlink" title="Permanent link">¤</a></h3>
@@ -1570,6 +1538,10 @@ multi-goal a-star planner. Defaults to PlannerKwargs().</p></td>
     
     
       <script src="../../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+        <script src="../../../js/mathjaxhelper.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>
