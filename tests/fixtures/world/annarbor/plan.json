@@ -17,7 +17,7 @@
         "allow_diag": true,
         "map_res": 2.0,
         "obstacle_value": 1.0,
-        "normalizing_path_cost": 200.0,
+        "normalizing_path_cost": 250.0,
         "goal_weight": 0.5,
         "path_weight": 0.5,
         "keep_nodes": false,
@@ -38,14 +38,64 @@
                 270.0
             ],
             "planner_kwargs": {
-                "normalizing_path_cost": 200.0
+                "normalizing_path_cost": 250.0
             },
             "lss_query_kwargs": {
-                "radius": 200.0,
+                "radius": 250.0,
                 "max_altitude": 400.0,
                 "max_ls_risk": 0.6
+            }
+        },
+        {
+            "name": "Scenario 2",
+            "details": "North West - Many Buildings",
+            "position": [
+                42.27836,
+                -83.74738,
+                260.0
+            ],
+            "planner_kwargs": {
+                "normalizing_path_cost": 250.0
             },
-            "active": false
+            "lss_query_kwargs": {
+                "radius": 250.0,
+                "max_altitude": 400.0,
+                "max_ls_risk": 0.6
+            }
+        },
+        {
+            "name": "Scenario 3",
+            "details": "South West - Parks and Buildings",
+            "position": [
+                42.272593,
+                -83.747044,
+                255.0
+            ],
+            "planner_kwargs": {
+                "normalizing_path_cost": 250.0
+            },
+            "lss_query_kwargs": {
+                "radius": 250.0,
+                "max_altitude": 400.0,
+                "max_ls_risk": 0.6
+            }
+        },
+        {
+            "name": "Scenario 4",
+            "details": "UK",
+            "position": [
+                42.274866,
+                -83.735783,
+                270.0
+            ],
+            "planner_kwargs": {
+                "normalizing_path_cost": 250.0
+            },
+            "lss_query_kwargs": {
+                "radius": 250.0,
+                "max_altitude": 400.0,
+                "max_ls_risk": 0.6
+            }
         }
     ]
 }
