@@ -29,13 +29,42 @@ class PlannerKwargs(SuperDataClass):
     path_w0: float = 1.0
 
 
+
+class PlannerKwargsDict(TypedDict):
+    allow_diag: bool
+    map_res: float
+    obstacle_value: float
+    normalizing_path_cost: float
+    goal_weight: float
+    path_weight: float
+    keep_nodes: bool
+    path_w0: float
+
+
+class LSSKwargs(TypedDict):
+    csv_fp: str
+    "CSV file path that holds all landing sites"
+    srid: str
+    "SRID to transform data to"
+    shift_alt: float
+    "How much to shift the altitude"
+
+class LSSQueryKwargs(TypedDict):
+    "Keyword arguments for landing site selection"
+    radius: float
+    "The radial search footprint"
+    max_altitude: float
+    "Maximum altitude allowed"
+    max_ls_risk: float
+    "Maximum landing site risk allowed"
+
 class Scenario(TypedDict):
     name: str
-    details: Optional[str]
     position: Coord  # assumed to be in GPS!
-    active: Optional[bool]
-    landing_sites: Optional[List[Dict]]
+    lss_query_kwargs: LSSQueryKwargs
     planner_kwargs: Optional[Dict]
+    details: Optional[str]
+    active: Optional[bool]
 
 
 class VoxelMeta(TypedDict):
@@ -56,7 +85,8 @@ class Plan(TypedDict):
     cost_map_fp: str
     voxel_meta: VoxelMeta
     map_bbox: Optional[Dict]
-    planner_kwargs: PlannerKwargs
+    planner_kwargs: PlannerKwargsDict
+    lss_kwargs: LSSKwargs
     scenarios: List[Scenario]
 
 

@@ -1,4 +1,5 @@
-from .geoplanner import GeoPlanner, create_planner_from_configuration
+from .geoplanner import GeoPlanner
+from .util import create_planner_from_configuration
 from .types import (
     GeoMultiPlannerResult,
     PlannerKwargs,

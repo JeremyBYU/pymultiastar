@@ -2,7 +2,14 @@ from typing import Tuple
 import open3d as o3d
 import matplotlib as mpl
 import numpy as np
-from ..geoplanner.types import GPS, LandingSite, Coord, GeoMultiPlannerResult, CoordPath, CoordRisk
+from ..geoplanner.types import (
+    GPS,
+    LandingSite,
+    Coord,
+    GeoMultiPlannerResult,
+    CoordPath,
+    CoordRisk,
+)
 from ..geoplanner import GeoPlanner
 from ..geoplanner.helper import convert_cost_map_to_float
 from ..types import Cell
@@ -11,8 +18,9 @@ from typing import List
 from .log import logger
 
 default_buildings = [
-    [(7, 12), (7, 12), (0, 12 ), 255],
+    [(7, 12), (7, 12), (0, 12), 255],
 ]
+
 
 def create_map(
     shape=(20, 30, 15), buildings=default_buildings, dtype=np.float32, normalize=True
@@ -66,15 +74,17 @@ def create_pcd_map(map, obstacle_value=1.0, ds_voxel_size=4.0, **kwargs):
     pcd_obstacle = pcd_obstacle.voxel_down_sample(voxel_size=ds_voxel_size)
     obstacle = dict(name="Obstacles", geometry=pcd_obstacle)
 
-    xres = kwargs.get('xres', 1.0)
+    xres = kwargs.get("xres", 1.0)
     i, j, k = map.shape
-    map_bounds = np.array([
-        [0, 0, 0],
-        [0, i * xres, 0],
-        [j*xres, i*xres, 0],
-        [j*xres, 0, 0],
-        [0, 0, 0],
-    ])
+    map_bounds = np.array(
+        [
+            [0, 0, 0],
+            [0, i * xres, 0],
+            [j * xres, i * xres, 0],
+            [j * xres, 0, 0],
+            [0, 0, 0],
+        ]
+    )
     line_set = dict(name="Map Bounds", geometry=create_line(map_bounds))
     # when the point cloud is bigger than 7_000_000 points it will reappear if deselected
     # this was just a test to prove it
@@ -92,10 +102,11 @@ def create_pcd_map(map, obstacle_value=1.0, ds_voxel_size=4.0, **kwargs):
 
     return geoms
 
+
 def swap_xy_list(coord):
-    result:List[Coord] = []
+    result: List[Coord] = []
     for i in coord:
-        result.append((i[1], i[0], i[2])) 
+        result.append((i[1], i[0], i[2]))
     return result
 
 
@@ -107,8 +118,8 @@ def create_planning_objects(
     start: Coord,
     goals: List[CoordRisk],
     path: CoordPath,
-    radius:float=0.5,
-    flip_xy=True
+    radius: float = 0.5,
+    flip_xy=True,
 ):
     start = swap_xy(start) if flip_xy else start
     goals = [(swap_xy(goal[0]), goal[1]) if flip_xy else goal for goal in goals]
@@ -118,7 +129,9 @@ def create_planning_objects(
         geometry=create_object(start, color=[0.0, 0.0, 1.0], radius=radius),
     )
 
-    goal_objects = list(map(lambda x: create_object(x[0], radius=radius, color=x[1]), goals))
+    goal_objects = list(
+        map(lambda x: create_object(x[0], radius=radius, color=x[1]), goals)
+    )
     # logger.debug(f"Projected LS Coords {ls_coords}")
     goal_group = o3d.geometry.TriangleMesh()
     for ob in goal_objects:
@@ -159,15 +172,20 @@ def create_landing_objects(
         ls_group += ob
     ls_group = dict(name="Landing Sites", geometry=ls_group)
 
-    path_line_set = create_line(plan_results["path_projected_zero_origin"])
-    path_line_set = dict(name="Optimal Path", geometry=path_line_set)
+    if plan_results["path_projected_zero_origin"]:
+        path_line_set = create_line(plan_results["path_projected_zero_origin"])
+        path_line_set = dict(name="Optimal Path", geometry=path_line_set)
+    else:
+        path_line_set = dict(name="Optimal Path", geometry=o3d.geometry.TriangleMesh())
 
     all_labels = [(goal[0], str(goal[1])) for goal in zip(ls_coords, ls_list)]
 
     return [start_object, ls_group, path_line_set], all_labels
 
 
-def create_object(object: Coord, object_type="ico", color=[1.0, 0.0, 0.0], radius=3.0, cmap='viridis'):
+def create_object(
+    object: Coord, object_type="ico", color=[1.0, 0.0, 0.0], radius=3.0, cmap="viridis"
+):
     object_3d = None
     if object_type == "ico":
         object_3d = o3d.geometry.TriangleMesh.create_icosahedron(radius=radius)
@@ -193,24 +211,44 @@ def create_line(points, color=[0, 1, 0]):
     line_set.paint_uniform_color(color)
     return line_set
 
-def visualize_world(all_geoms, all_labels:List[Tuple[Coord, str]]=[], look_at=None, 
-                    eye=None, point_size=7, actions=[]):
+
+def visualize_world(
+    all_geoms,
+    all_labels: List[Tuple[Coord, str]] = [],
+    look_at=None,
+    eye=None,
+    point_size=7,
+    actions=[],
+):
+    # using dictionary for easier mutable access
+    # used in toggle_labels function
+    label_dict = dict(labels_on=True)
 
     def init(vis):
         vis.show_ground = True
         vis.ground_plane = o3d.visualization.rendering.Scene.GroundPlane.XY  # type: ignore
         vis.point_size = point_size
         vis.show_axes = True
-
         for label in all_labels:
             vis.add_3d_label(label[0], label[1])
 
+    def toggle_labels(vis, label_dict):
+        if vis is not None:
+            if label_dict["labels_on"]:
+                vis.clear_3d_labels()
+            else:
+                for label in all_labels:
+                    vis.add_3d_label(label[0], label[1])
+
+        label_dict["labels_on"] = not label_dict["labels_on"]
+
     if eye is None or look_at is None:
-        boundary = all_geoms[0]['geometry'].get_axis_aligned_bounding_box()
+        boundary = all_geoms[0]["geometry"].get_axis_aligned_bounding_box()
         look_at = boundary.get_center()
         extent = boundary.get_extent()
-        eye = [extent[0]/2, -extent[1]/1.5, extent[1]]
+        eye = [extent[0] / 2, -extent[1] / 1.5, extent[1]]
 
+    actions.append(("Toggle Labels", lambda vis: toggle_labels(vis, label_dict)))
     logger.info("Please exit by closing the 3D Visualization Window!")
     o3d.visualization.draw(  # type: ignore
         all_geoms,
@@ -220,8 +258,9 @@ def visualize_world(all_geoms, all_labels:List[Tuple[Coord, str]]=[], look_at=No
         title="World Viewer",
         on_init=init,
         show_ui=True,
-        actions=actions
+        actions=actions,
     )
+
 
 def visualize_plan(planner_data, plan_result, xres=2.0, actions=[]):
     logger.info("Loading Map for Visualization ...")
@@ -234,8 +273,12 @@ def visualize_plan(planner_data, plan_result, xres=2.0, actions=[]):
     world_geoms = create_pcd_map(map_3d, obstacle_value=1.0, xres=xres)
     logger.info("Finished Loaded Map!")
 
-    all_geoms = [*world_geoms, *landing_objects,]
+    all_geoms = [
+        *world_geoms,
+        *landing_objects,
+    ]
     visualize_world(all_geoms, all_labels=all_labels, actions=actions)
+
 
 def is_pareto_efficient(costs):
     """
@@ -246,35 +289,52 @@ def is_pareto_efficient(costs):
     for i, c in enumerate(costs):
         if is_efficient[i]:
             is_efficient[is_efficient] = np.any(
-                costs[is_efficient] <= c, axis=1)  # Remove dominated points
+                costs[is_efficient] <= c, axis=1
+            )  # Remove dominated points
     return is_efficient
 
 
 def plot_pareto(planner, start_cell, goal_cells, planning_parameters, **kwargs):
     import pandas as pd
     import matplotlib.pyplot as plt
-    pareto_points = calculate_pareto_points(planner, start_cell, goal_cells, **planning_parameters)
+
+    pareto_points = calculate_pareto_points(
+        planner, start_cell, goal_cells, **planning_parameters
+    )
     df = pd.DataFrame.from_records(pareto_points)
     plot_pareto_(df, **kwargs)
     plt.show()
 
-def plot_pareto_(df, x='goal_risk', y='path_risk', goal_name="Goal", total_risk='total_risk', fname=None):
+
+def plot_pareto_(
+    df,
+    x="goal_risk",
+    y="path_risk",
+    goal_name="Goal",
+    total_risk="total_risk",
+    fname=None,
+):
     import seaborn as sns
     import matplotlib.pyplot as plt
     import pandas as pd
-#     df_p = df_p[df_p['path_risk'] < 1.0]
-    costs = df[[x,y]].values
-    pareto_df = pd.DataFrame(costs[is_pareto_efficient(costs)], columns=[x, y]).sort_values(by=[x])
+
+    #     df_p = df_p[df_p['path_risk'] < 1.0]
+    costs = df[[x, y]].values
+    pareto_df = pd.DataFrame(
+        costs[is_pareto_efficient(costs)], columns=[x, y]
+    ).sort_values(by=[x])
     # ax.scatter(df_[0:4]['total_cost'], df_[0:4]['path_cost'], color='r', label='Chosen Landing Sites')
     ax = sns.scatterplot(data=df, x=x, y=y, color="m", label="All Goals", zorder=5)
-    ax.plot(pareto_df[x], pareto_df[y], color='g', label='Pareto Frontier', zorder=1)
+    ax.plot(pareto_df[x], pareto_df[y], color="g", label="Pareto Frontier", zorder=1)
     top_item = df.iloc[df[total_risk].idxmin()]
-    ax.scatter(top_item[x], top_item[y], color='r', label=f'Best {goal_name}', zorder=10)
+    ax.scatter(
+        top_item[x], top_item[y], color="r", label=f"Best {goal_name}", zorder=10
+    )
     sns.set(font_scale=1.3)  # crazy big
     ax.set_xlabel(f"{goal_name} Risk ($r_{goal_name[0].lower()}$)")
     ax.set_ylabel("Path Risk ($r_p$)")
-    ax.axis('equal')
-    plt.legend(loc='upper right')
+    ax.axis("equal")
+    plt.legend(loc="upper right")
     if fname:
-        plt.savefig(fname, bbox_inches='tight')
+        plt.savefig(fname, bbox_inches="tight")
     return ax

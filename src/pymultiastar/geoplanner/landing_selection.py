@@ -13,7 +13,7 @@ from .types import GPS, Coord
 from ..util import TicToc
 
 
-class LandingSiteSelection:
+class LSSPlanner:
     csv_fp: Path
     "The file csv file path of all data"
     index_fp: Path
@@ -21,13 +21,13 @@ class LandingSiteSelection:
     srid: str
     transformer: Transformer
 
-    def __init__(self, csv_fp: Path, srid="epsg:26918"):
+    def __init__(self, csv_fp: Path, srid="epsg:26918", shift_alt=0.0):
         self.csv_fp = csv_fp
         self.index_fp = csv_fp.with_suffix('.idx')
         self.srid = srid
 
         self.transformer = Transformer.from_crs("EPSG:4326", srid)
-        self.landing_sites: List[LandingSite] = self.parse_landing_sites(csv_fp)
+        self.landing_sites: List[LandingSite] = self.parse_landing_sites(csv_fp, shift_alt)
         self.idx = self.index_landing_sites() # 1 ms to load cache, 200 ms cold
 
     def index_landing_sites(self) -> spatial.KDTree:
@@ -49,9 +49,9 @@ class LandingSiteSelection:
     def query(
         self,
         location: GPS,
-        radius: int = 200,
+        radius: float = 200,
         max_altitude: float = 60.0,
-        max_ls_risk=0.6,
+        max_ls_risk:float =0.6,
     ):
         p: Coord[float] = self.transformer.transform(*location.to_array())
 
@@ -67,7 +67,7 @@ class LandingSiteSelection:
         return final_results
 
     @staticmethod
-    def parse_landing_sites(csv_fp: Path) -> List[LandingSite]:
+    def parse_landing_sites(csv_fp: Path, shift_alt: float = 0.0) -> List[LandingSite]:
         """Parse landing sites in CSV form
 
         Args:
@@ -81,7 +81,7 @@ class LandingSiteSelection:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 centroid = GPS(
-                    float(row["gps.lat"]), float(row["gps.lon"]), float(row["gps.alt"])
+                    float(row["gps.lat"]), float(row["gps.lon"]), float(row["gps.alt"]) + shift_alt
                 )
                 landing_sites.append(
                     LandingSite(

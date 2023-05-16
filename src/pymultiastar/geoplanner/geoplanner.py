@@ -2,7 +2,6 @@ import time
 import pymultiastar as pmstar
 from typing import List, Tuple, Optional
 from pathlib import Path
-import json
 
 import numpy as np
 from pyproj import Transformer
@@ -204,12 +203,3 @@ class GeoPlanner(object):
         return (path, path_cost)
 
 
-def create_planner_from_configuration(plan: Path):
-    with open(plan, "r") as fh:
-        planner_data = json.load(fh)
-    planner_data["cost_map_fp"] = plan.parent / planner_data["cost_map_fp"]
-    voxel_meta: VoxelMeta = planner_data["voxel_meta"]
-
-    planner_kwargs = PlannerKwargs(**planner_data["planner_kwargs"])
-    geo_planner = GeoPlanner(planner_data["cost_map_fp"], voxel_meta, planner_kwargs)
-    return geo_planner, planner_data

@@ -8,6 +8,8 @@ class PyMultiAStar(object):
     A planner that will search for **multiple** goals with **heterogenous** values
     using a 3D A-star **discrete** planner.
     """
+    normalizing_path_cost: float
+    "normalizing path cost property. This property can be updated after object construction"
 
     def __init__(
         self,

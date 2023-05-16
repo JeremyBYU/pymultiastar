@@ -7,13 +7,9 @@ from pymultiastar.visualization.vis3d_helpers import visualize_plan, plot_pareto
 from pymultiastar.geoplanner.helper import EnhancedJSONEncoder
 from rich.prompt import Prompt
 
-from pymultiastar.geoplanner import (
-    GeoPlanner,
-    Scenario,
-    GPS,
-    LandingSite,
-    create_planner_from_configuration,
-)
+from pymultiastar.geoplanner import GeoPlanner, Scenario, GPS, LandingSite
+from pymultiastar.geoplanner.landing_selection import LSSPlanner
+from pymultiastar.geoplanner.util import create_planner_from_configuration
 from pymultiastar.types import LogLevel
 from log import logger
 
@@ -25,27 +21,16 @@ ANNARBOR_PLAN = WORLD_DIR / "annarbor/plan.json"
 OUTPUT_DIR = THIS_DIR.parent / "output"
 
 
-def plan_scenario(scenario: Scenario, geo_planner: GeoPlanner):
+def plan_scenario(scenario: Scenario, geo_planner: GeoPlanner, lss_planner: LSSPlanner):
     start_pos = GPS(*scenario["position"])
-    if scenario.get("landing_sites") is None:
-        raise NotImplementedError(
-            "This module relies upon the user providing landing sites"
-        )
-    assert scenario["landing_sites"] is not None
+    ls_list = lss_planner.query(start_pos, **scenario["lss_query_kwargs"])
 
-    ls_list = [
-        LandingSite(
-            GPS(*ls["position"]),
-            landing_site_risk=ls["landing_site_risk"],
-            radius=ls.get("radius"),
-            uid=ls.get("osm_id"),
+    if scenario.get("planner_kwargs", None) is not None:
+        assert scenario["planner_kwargs"] is not None
+        npc = scenario["planner_kwargs"].get(
+            "normalizing_path_cost", geo_planner.planner_kwargs.normalizing_path_cost
         )
-        for ls in scenario["landing_sites"]
-    ]
-    if scenario.get("planner_kwargs") is not None:
-        logger.warning(
-            "Not implemented! Updating planner arguments in each scenario is not yet supported!"
-        )
+        geo_planner.planner.normalizing_path_cost = npc
 
     logger.debug("Start Pos: %s", start_pos)
     logger.debug("Landing Sites: %s", ls_list)
@@ -89,7 +74,7 @@ def run_city_plan(
     logging.getLogger().setLevel(getattr(logging, log_level.value))
 
     # read planner data
-    geo_planner, planner_data = create_planner_from_configuration(plan)
+    geo_planner, lss_planner, planner_data = create_planner_from_configuration(plan)
     voxel_meta = planner_data["voxel_meta"]
     scenarios = planner_data["scenarios"]
 
@@ -108,7 +93,7 @@ def run_city_plan(
         chosen_scenarios = scenarios
 
     for scenario in chosen_scenarios:
-        scenario_result, actions = plan_scenario(scenario, geo_planner)
+        scenario_result, actions = plan_scenario(scenario, geo_planner, lss_planner)
         scenario_results.append(scenario_result["plan_results"])
         if visualize:
             visualize_plan(
