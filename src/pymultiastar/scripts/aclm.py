@@ -3,18 +3,22 @@ import csv
 
 import typer
 from .log import logger
-from pymultiastar.geoplanner.landing_selection import parse_landing_sites
+from pymultiastar.geoplanner.landing_selection import LandingSiteSelection, GPS
 
 app = typer.Typer()
 
 
 @app.command()
 def index_csv(path: Path):
-    parse_landing_sites(path)
+    lss = LandingSiteSelection(path)
+    loc = GPS(40.746077, -73.99050, 19.0)
+    lss.query(loc)
+    
 
 @app.command()
 def run_plan(path: Path):
-    parse_landing_sites(path)
+    pass
+    # parse_landing_sites(path)
 
 
 def main():
