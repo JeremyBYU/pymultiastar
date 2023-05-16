@@ -37,6 +37,8 @@ def plan_scenario(scenario: Scenario, geo_planner: GeoPlanner):
         LandingSite(
             GPS(*ls["position"]),
             landing_site_risk=ls["landing_site_risk"],
+            radius=ls.get("radius"),
+            uid=ls.get("osm_id"),
         )
         for ls in scenario["landing_sites"]
     ]

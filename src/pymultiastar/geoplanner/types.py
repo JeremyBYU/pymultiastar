@@ -89,6 +89,10 @@ class LandingSite(SuperDataClass):
     "The centroid of the landing site in GPS coordinates"
     landing_site_risk: float
     "The normalized risk of this landing site [0-1]"
+    radius: Optional[float] = None
+    "The radius of this landing site"
+    uid: Optional[int] = None
+    "A unique identifier for this landing site"
 
     def __str__(self):
         result = f"GPS: {self.centroid.lat:.4f}, {self.centroid.lon:.4f}, \

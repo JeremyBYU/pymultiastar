@@ -52,3 +52,6 @@ package-dir = {"" = "src"}
 [tool.ruff]
 line-length = 100
 target-version = "py310"
+
+[project.scripts]
+aclm = "pymultiastar.scripts.aclm:main"
