@@ -84,10 +84,10 @@ class Plan(TypedDict):
     name: str
     cost_map_fp: str
     voxel_meta: VoxelMeta
-    map_bbox: Optional[Dict]
     planner_kwargs: PlannerKwargsDict
     lss_kwargs: LSSKwargs
     scenarios: List[Scenario]
+    map_glb: Optional[str]
 
 
 @dataclass

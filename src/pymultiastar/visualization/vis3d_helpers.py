@@ -9,6 +9,7 @@ from ..geoplanner.types import (
     GeoMultiPlannerResult,
     CoordPath,
     CoordRisk,
+    Plan
 )
 from ..geoplanner import GeoPlanner
 from ..geoplanner.helper import convert_cost_map_to_float
@@ -262,7 +263,7 @@ def visualize_world(
     )
 
 
-def visualize_plan(planner_data, plan_result, xres=2.0, actions=[]):
+def visualize_plan(planner_data:Plan, plan_result, xres=2.0, actions=[]):
     logger.info("Loading Map for Visualization ...")
 
     landing_objects, all_labels = create_landing_objects(**plan_result)  # type: ignore
@@ -277,6 +278,15 @@ def visualize_plan(planner_data, plan_result, xres=2.0, actions=[]):
         *world_geoms,
         *landing_objects,
     ]
+
+    if planner_data.get("map_glb") is not None:
+        model = o3d.io.read_triangle_model(planner_data["map_glb"])
+        image_mesh = model.meshes[0].mesh
+        image_mesh.rotate(image_mesh.get_rotation_matrix_from_xyz([np.radians(90), 0 , 0]))
+        offset = image_mesh.get_axis_aligned_bounding_box().get_extent() / 2.0
+        image_mesh.translate(offset)
+        all_geoms.append(model)
+
     visualize_world(all_geoms, all_labels=all_labels, actions=actions)
 
 

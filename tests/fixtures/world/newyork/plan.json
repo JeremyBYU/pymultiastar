@@ -1,6 +1,7 @@
 {
     "name": "New York",
     "cost_map_fp": "./voxel_map.npy",
+    "map_glb": "./ny.glb",
     "voxel_meta": {
         "srid": "epsg:26918",
         "nrows": 1500,

@@ -85,6 +85,7 @@ plugins:
             ignore_init_summary: yes
           merge_init_into_class: yes
           show_submodules: no
+          allow_inspection: no
 
 extra:
   social:

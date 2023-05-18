@@ -1,6 +1,7 @@
 {
     "name": "Ann Arbor",
     "cost_map_fp": "./voxel_map.npy",
+    "map_glb": "./aa.glb",
     "voxel_meta": {
         "srid": "epsg:26917",
         "nrows": 792,

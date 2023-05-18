@@ -10,6 +10,8 @@ def create_planner_from_configuration(plan: Path):
         planner_data:Plan = json.load(fh)
     planner_data["cost_map_fp"] = plan.parent / planner_data["cost_map_fp"] # type: ignore
     planner_data["lss_kwargs"]["csv_fp"] =  plan.parent / planner_data["lss_kwargs"]["csv_fp"] # type: ignore
+    if planner_data.get('map_glb') is not None:
+        planner_data["map_glb"] =  str(plan.parent / planner_data["map_glb"]) # type: ignore
     voxel_meta: VoxelMeta = planner_data["voxel_meta"]
     geo_planner = GeoPlanner(
         planner_data["cost_map_fp"],
