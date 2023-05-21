@@ -173,7 +173,7 @@ def create_landing_objects(
         ls_group += ob
     ls_group = dict(name="Landing Sites", geometry=ls_group)
 
-    if plan_results["path_projected_zero_origin"]:
+    if plan_results and plan_results["path_projected_zero_origin"]:
         path_line_set = create_line(plan_results["path_projected_zero_origin"])
         path_line_set = dict(name="Optimal Path", geometry=path_line_set)
     else:

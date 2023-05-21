@@ -5,9 +5,17 @@ from pathlib import Path
 
 import numpy as np
 from pyproj import Transformer
+from pyproj.enums import TransformDirection
 
 from ..types import ArrayFloatMxNxK, CellPath
-from .types import (PlannerKwargs, VoxelMeta, GPS, LandingSite, GeoMultiPlannerResult, Coord)
+from .types import (
+    PlannerKwargs,
+    VoxelMeta,
+    GPS,
+    LandingSite,
+    GeoMultiPlannerResult,
+    Coord,
+)
 from .helper import (
     convert_cost_map_to_float,
     prepare_planning_args_optimized,
@@ -15,7 +23,7 @@ from .helper import (
     voxel_projected_to_cell,
     get_free_neighbor_cell,
     get_first_free_cell_up,
-    get_path_dist
+    get_path_dist,
 )
 from .log import logger
 
@@ -53,9 +61,7 @@ class GeoPlanner(object):
         self.cost_map = convert_cost_map_to_float(np.load(cost_map_fp))
         self.planner = pmstar.PyMultiAStar(self.cost_map, **planner_kwargs.to_dict())
 
-        self.transformer = Transformer.from_crs(
-            "EPSG:4326", voxel_meta["srid"]
-        )
+        self.transformer = Transformer.from_crs("EPSG:4326", voxel_meta["srid"])
 
     def plan_multi_goal(
         self, start_position: GPS, ls_list: List[LandingSite]
@@ -74,9 +80,9 @@ class GeoPlanner(object):
             start_position, ls_list, self.transformer
         )
         # to cell position
-        start_cell = voxel_projected_to_cell(project_start, self.voxel_meta)      
+        start_cell = voxel_projected_to_cell(project_start, self.voxel_meta)
         # logger.debug(f"Start Cell: {start_cell}")
-        goal_cells:List[Tuple[Tuple[int, int, int], float]] = []
+        goal_cells: List[Tuple[Tuple[int, int, int], float]] = []
 
         # Checking on start and goal cell positions
         bad_start = self.cost_map[start_cell[0], start_cell[1], start_cell[2]] == np.inf
@@ -84,17 +90,25 @@ class GeoPlanner(object):
             sc_ = start_cell[:]  # makes copy
             start_cell = get_free_neighbor_cell(start_cell, self.cost_map)
             if start_cell is None:
-                logger.error(
-                    "ERROR - Bad Start Cell! Start Cell: {} - {}".format(
-                        sc_, self.cost_map[sc_[0], sc_[1], sc_[2]]
-                    )
+                logger.warning(
+                    "Can't find a free cell around at %s, looking up", start_position
                 )
-                logger.error("{}".format(start_position))
-                return None
+                start_cell = get_first_free_cell_up(sc_, self.voxel_meta, self.cost_map)
+                if start_cell is None:
+                    logger.error(
+                        "ERROR - Bad Start Cell! Start Cell: {}, GPS: {}".format(
+                            sc_, start_position
+                        )
+                    )
+                    return None
+                else:
+                    proj_coord = voxel_cell_to_projected(start_cell, self.voxel_meta)
+                    new_gps = self.transform_projected_to_gps(proj_coord)
+                    logger.warning("New start position: %s", new_gps)
         # This set is used to ensure that every goal as a UNIQUE cell location in the voxel grid.
         unique_goal_cell_set = set()
         # In case a bad goal has been give, keep this list to mark all the valid goals (landing sites)
-        valid_landing_site_indices:List[int] = []
+        valid_landing_site_indices: List[int] = []
         for i, (goal_pos, goal_value) in enumerate(projected_goals):
             gc = voxel_projected_to_cell(goal_pos, self.voxel_meta)
             bad_goal = self.cost_map[gc[0], gc[1], gc[2]] == np.inf
@@ -124,20 +138,18 @@ class GeoPlanner(object):
                 valid_landing_site_indices.append(i)
                 goal_cells.append((gc, goal_value))
             else:
-                logger.error(
-                    "Landing site is mapped to a Map Cell that is already taken! Skipping. Index: %r, Pos: %r, Value: %r",
+                logger.warning(
+                    "Landing site is mapped to a Map Cell that is already taken! Skipping. Index: %r, Projected Pos: %r, Landing Site: %r",
                     i,
                     goal_pos,
-                    goal_value,
+                    ls_list[i],
                 )
 
         logger.debug(f"Start Cell: {start_cell}")
         logger.debug(f"Goal Cells: {goal_cells}")
 
         start_time = time.perf_counter()
-        path_cells, meta = self.planner.search_multiple(
-            start_cell, goal_cells
-        )
+        path_cells, meta = self.planner.search_multiple(start_cell, goal_cells)
         elapsed_time = (time.perf_counter() - start_time) * 1000
 
         if meta["goal_total_cost"] == -1.0:
@@ -150,18 +162,15 @@ class GeoPlanner(object):
         logger.debug("Path Cost: %s ", meta["goal_total_cost"])
         # These are index coordinates! Convert to meters
         path_projected = [
-            voxel_cell_to_projected(cell, self.voxel_meta)
-            for cell in path_cells
+            voxel_cell_to_projected(cell, self.voxel_meta) for cell in path_cells
         ]
         path_projected_zero_origin = [
-            self.transform_projected_to_zero_origin(coord)
-            for coord in path_projected
+            self.transform_projected_to_zero_origin(coord) for coord in path_projected
         ]
-
 
         path_length = get_path_dist(path_projected)
         # {'path_cost': dummy_path_risk(start_pos, goal_pos), 'path': path, 'index': index}
-        result:GeoMultiPlannerResult = {
+        result: GeoMultiPlannerResult = {
             "start_position": start_position,
             "path_cells": path_cells,
             "path_projected": path_projected,
@@ -174,32 +183,40 @@ class GeoPlanner(object):
         return result
 
     def transform_gps_to_projected(self, gps: GPS) -> Coord:
-        coord:Coord = self.transformer.transform(*gps.to_array())
+        coord: Coord = self.transformer.transform(*gps.to_array())
         return coord
 
     def transform_gps_to_projected_zero_origin(self, gps: GPS) -> Coord:
         # import ipdb; ipdb.set_trace()
-        coord:Coord = self.transformer.transform(*gps.to_array())
-        x_meters = coord[0] - self.voxel_meta['xmin']
-        y_meters = coord[1] - self.voxel_meta['ymin']
-        z_meters = coord[2] - self.voxel_meta['zmin']
-        
+        coord: Coord = self.transformer.transform(*gps.to_array())
+        x_meters = coord[0] - self.voxel_meta["xmin"]
+        y_meters = coord[1] - self.voxel_meta["ymin"]
+        z_meters = coord[2] - self.voxel_meta["zmin"]
+
         return (x_meters, y_meters, z_meters)
 
-    def transform_projected_to_zero_origin(self, coord:Coord) -> Coord:
+    def transform_projected_to_zero_origin(self, coord: Coord) -> Coord:
         # import ipdb; ipdb.set_trace()
-        x_meters = coord[0] - self.voxel_meta['xmin']
-        y_meters = coord[1] - self.voxel_meta['ymin']
-        z_meters = coord[2] - self.voxel_meta['zmin']
-        
+        x_meters = coord[0] - self.voxel_meta["xmin"]
+        y_meters = coord[1] - self.voxel_meta["ymin"]
+        z_meters = coord[2] - self.voxel_meta["zmin"]
+
         return (x_meters, y_meters, z_meters)
-    
-    def search_single(self, start_position: GPS, ls:LandingSite) -> Optional[Tuple[CellPath, float]]:
+
+    # voxel_cell_to_projected
+
+    def transform_projected_to_gps(self, coord: Coord) -> GPS:
+        lat, lon = self.transformer.transform(
+            coord[0], coord[1], direction=TransformDirection.INVERSE
+        )
+        return GPS(lat, lon, coord[2])
+
+    def search_single(
+        self, start_position: GPS, ls: LandingSite
+    ) -> Optional[Tuple[CellPath, float]]:
         result = self.plan_multi_goal(start_position, [ls])
         if result is None:
             return None
         path_cost = result["goal_path_cost"]
         path = result["path_cells"]
         return (path, path_cost)
-
-
