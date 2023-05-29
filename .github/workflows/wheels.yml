@@ -44,7 +44,7 @@ jobs:
       with:
         submodules: true
 
-    - uses: pypa/cibuildwheel@v2.12.3
+    - uses: pypa/cibuildwheel@v2.13.0
       env:
         CIBW_TEST_REQUIRES: pytest pyproj>=3.0 scipy>=1.10.0
         CIBW_ARCHS_MACOS: universal2
